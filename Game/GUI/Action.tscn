@@ -1,0 +1,23 @@
+[gd_scene format=2]
+
+[node name="Action" type="MarginContainer"]
+margin_right = 20.0
+margin_bottom = 20.0
+mouse_filter = 2
+custom_constants/margin_right = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="."]
+margin_left = 5.0
+margin_right = 25.0
+margin_bottom = 20.0
+focus_mode = 0
+shortcut_in_tooltip = false
+text = "Послать вперед собаку"
+__meta__ = {
+"_edit_use_anchors_": false
+}
