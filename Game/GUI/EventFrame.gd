@@ -11,7 +11,7 @@ onready var _buttons := [] # пул кнопок для отображения �
 var _event: GameEvent # ссылка на событие
 
 signal pressed # для дублирования сигнала с кнопки
-signal action_pressed(action_index) # передает индекс нажатого действия
+signal action_pressed # пользователь выбрал действие
 
 
 func _ready() -> void:
@@ -27,9 +27,11 @@ func show_actions() -> void: # формирование списка возмо�
 	_separator.visible = false
 	_button.mouse_filter = Control.MOUSE_FILTER_IGNORE # чтобы нельзя было триггерить кнопку
 	
+	_event.update_actions()
+	
 	for action in _event.actions:
 		var button = _get_button() # получаем ссылку на пустую кнопку
-		button.get_node("Button").text = action
+		button.get_node("Button").text = action.Action_text
 		button.visible = true
 	
 	visible = true
@@ -60,4 +62,5 @@ func _get_button() -> Button: # ищет в пуле незанятую кноп
 	return button
 
 func _on_button_pressed(button: MarginContainer) -> void: # вызывается при нажатии на любую кнопку действия
-	emit_signal("action_pressed", _buttons.find(button))
+	emit_signal("action_pressed")
+	_event.apply_action(_buttons.find(button))

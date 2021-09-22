@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Game/Player.gd" type="Script" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
-[ext_resource path="res://Game/GUI/ItemList.gd" type="Script" id=3]
+[ext_resource path="res://Game/GUI/EntityList.gd" type="Script" id=3]
 [ext_resource path="res://Game/Game.gd" type="Script" id=4]
 [ext_resource path="res://Game/GUI/EventList.gd" type="Script" id=5]
+[ext_resource path="res://Game/GUI/GUI.gd" type="Script" id=6]
 
 [node name="Game" type="Node"]
 script = ExtResource( 4 )
@@ -15,26 +16,26 @@ script = ExtResource( 1 )
 [node name="GUI" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 2 )
+script = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ItemList" type="ItemList" parent="GUI"]
+[node name="EntityList" type="ItemList" parent="GUI"]
+visible = false
 anchor_top = 0.5
 anchor_bottom = 0.5
 margin_top = -56.0
 margin_right = 160.0
 margin_bottom = 56.0
 focus_mode = 0
-items = [ "Item 0", null, false, "Предмет 2", null, false, "ПРЕМЕТ ITEM #@-+", null, false, "Русский шрифт", null, false ]
 allow_rmb_select = true
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PopupMenu" type="PopupMenu" parent="GUI/ItemList"]
+[node name="PopupMenu" type="PopupMenu" parent="GUI/EntityList"]
 margin_right = 10.0
 margin_bottom = 10.0
 
@@ -50,6 +51,7 @@ __meta__ = {
 }
 
 [node name="EventList" type="MarginContainer" parent="GUI"]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -6.0
@@ -86,6 +88,66 @@ margin_right = 6.0
 margin_bottom = 6.0
 custom_constants/separation = 5
 alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="_EventResults" type="PanelContainer" parent="GUI"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -105.0
+margin_top = -71.5
+margin_right = 105.0
+margin_bottom = 71.5
+grow_horizontal = 2
+grow_vertical = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/_EventResults"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 205.0
+margin_bottom = 138.0
+
+[node name="Description" type="Label" parent="GUI/_EventResults/VBoxContainer"]
+margin_right = 200.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 200, 100 )
+size_flags_vertical = 7
+text = "Текст события:
+  - новая строка"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Confirm" type="Button" parent="GUI/_EventResults/VBoxContainer"]
+margin_left = 50.0
+margin_top = 104.0
+margin_right = 150.0
+margin_bottom = 133.0
+rect_min_size = Vector2( 100, 0 )
+focus_mode = 0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+shortcut_in_tooltip = false
+text = "OK"
+
+[node name="EventResults" type="AcceptDialog" parent="GUI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -135.5
+margin_top = -42.0
+margin_right = 79.5
+margin_bottom = 88.0
+theme = ExtResource( 2 )
+window_title = ""
 __meta__ = {
 "_edit_use_anchors_": false
 }

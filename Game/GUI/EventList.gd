@@ -14,7 +14,6 @@ func update_frames(events: Array) -> void: # заполняет рамки из 
 	
 	for event in events:
 		var frame = _get_frame() # получаем ссылку на пустую рамку
-		frame.connect("action_pressed", event, "apply_action") # событие получит индекс выбранного действия
 		frame.init(event)
 		frame.visible = true
 	
@@ -37,6 +36,7 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 	var frame = Resources.get_resource("Event_Frame").instance() as MarginContainer
 	frame.name += str(_frames.size()) # прибавляем к имени индекс в массиве
 	frame.connect("pressed", self, "_on_frame_pressed", [frame]) # передает ссылку на рамку в качестве аргумента
+	frame.connect("action_pressed", self, "_clear") # скрыть это окно после выбора действия
 	_event_container.add_child(frame)
 	_frames.append(frame)
 	return frame

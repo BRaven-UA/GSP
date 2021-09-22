@@ -1,54 +1,66 @@
-# Персонаж игрока. Содержит как собственный набор, так и список предметов со своими атрибутами
-# При изменении количества предметов (но не их атрибутов) генерируется сигнал
+# Персонаж игрока. Представлен в виде набора сущностей. Каждая сущность состоит из атрибутов (название, здоровье, урон, и т.д.)
+# Находясь в одном списке сущности могут влиять друг на друга
+# Базовая сущность игрока называется "Игрок", остальные сущности в списке принадлежат игроку, но могут быть использованы по отдельности
+# При изменении сущностей генерируется сигнал entities_changed
 
 extends Node
 
 class_name GamePlayer
 
-var _attributes := {DB.KEYS.TYPE: DB.TYPES.BIOLOGICAL, DB.KEYS.HEALTH: Vector2(100, 100), DB.KEYS.DAMAGE: 5} # Атрибуты игрока (дополняются в процессе игры)
-var _items := [] # Предметы игрока (setget на массивах не работает, поэтому доступ должен быть ТОЛЬКО через соотв. методы)
+var entities := [] # Сущности игрока (setget на массивах не работает, поэтому доступ должен быть ТОЛЬКО через соотв. методы)
+var _player: Dictionary # ссылка на сущность игрока для повышения читабельности кода
 
-signal items_changed(items) # Количество предметов изменилось, передаем массив предметов вместе с сигналом
+signal entities_changed # Количество сущностей изменилось
 
 
 func _enter_tree() -> void:
 	Global.player = self
 
 func test_start():
-	_items = []
-	add_item(DB.create_item("Нож"))
-	add_item(DB.create_item("Хлеб"))
-	add_item(DB.create_item("Собака"))
+	entities = []
+	add_entity(DB.create_entity("Игрок"))
+	add_entity(DB.create_entity("Нож"))
+	add_entity(DB.create_entity("Хлеб"))
+	add_entity(DB.create_entity("Собака"))
+	_player = entities[0]
 
-func get_source_list() -> Array:
-	var source_list := [_attributes]
-	source_list.append_array(_items)
-	return source_list
-
-func change_attribute(key: int, new_value) -> void:
-	if _attributes[key] == new_value:
-		return	# не тратим время на то же самое значение аттрибута
+func change_attribute(entity: Dictionary, key: int, new_value) -> void:
+	if entity[key] == new_value: return # не тратим время на то же самое значение аттрибута
 	
 	match key:
 		DB.KEYS.HEALTH:
-			new_value = clamp(new_value, 0.0, _attributes[DB.KEYS.HEALTH].y) # усекаем новое значение до интервала от нуля до максимального
-			if new_value == 0.0:
-				Global.game.game_over()
+			var current_value = entity[key]
+			
+#			if not (new_value is Vector2):
+#				new_value = Vector2(new_value, current_value.y)
+				
+			new_value.x = clamp(new_value.x, 0.0, current_value.y) # усекаем новое значение до интервала от нуля до максимального
+			
+			if new_value.x == 0.0:
+				if entity == _player:
+					Global.game.game_over()
+				else:
+					remove_entity(entity)
+		
+		DB.KEYS.USES:
+			if new_value < 1:
+				remove_entity(entity)
 	
-	_attributes[key] = new_value
+	entity[key] = new_value # TODO: проверить влияние изменения аттрибутов на удаленных сущностях и при "game over"
+	emit_signal("entities_changed", entities)
 
-func add_item(item: Dictionary) -> void:
-	if item:
-		_items.append(item)
-		emit_signal("items_changed", _items)
+func add_entity(entity: Dictionary) -> void:
+	if entity:
+		entities.append(entity)
+		emit_signal("entities_changed", entities)
 	else:
 		push_warning("Попытка добавить пустой предмет игроку !")
 		print_stack()
 
-func remove_item(item: Dictionary) -> void:
-	if item:
-		_items.erase(item)
-		emit_signal("items_changed", _items)
+func remove_entity(entity: Dictionary) -> void:
+	if entity:
+		entities.erase(entity)
+		emit_signal("entities_changed", entities)
 	else:
 		push_warning("Попытка удалить пустой предмет у игрока !")
 		print_stack()

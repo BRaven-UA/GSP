@@ -16,11 +16,9 @@ __meta__ = {
 margin_right = 200.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 200, 100 )
-focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 shortcut_in_tooltip = false
-enabled_focus_mode = 0
 keep_pressed_outside = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -57,7 +55,7 @@ expand = true
 [node name="Description" type="Label" parent="Container"]
 margin_top = 32.0
 margin_right = 200.0
-margin_bottom = 46.0
+margin_bottom = 50.0
 align = 1
 valign = 1
 autowrap = true
