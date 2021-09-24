@@ -29,10 +29,16 @@ func _add_action(action_text := "", result_text := "", changes := []): # доб�
 func apply_action(index: int) -> void: # применить указанное действие
 	var action = actions[index]
 	
-	for change in action.Changes: # изменений может быть несколько
-		Global.player.change_attribute(change.Target, change.Key, change.Value)
+	var dialog = Global.gui.show_accept_dialog(action.Result_text)
+	yield(dialog, "confirmed")
 	
-	Global.gui.show_event_results(action.Result_text)
+	for change in action.Changes: # изменений может быть несколько
+		if change.get(DB.KEYS.NAME): # передана сущность вместо словаря с изменением
+			Global.player.add_entity(change)
+		else:
+			Global.player.change_attribute(change.Target, change.Key, change.Value)
+	
+	Global.game.update_events()
 
 func _get_change(target: Dictionary, key: int, new_value) -> Dictionary: # функция-подсказка чтобы видеть состав словаря
 	return {"Target":target, "Key":key, "Value":new_value}
@@ -44,6 +50,7 @@ func _duel(participants: Array) -> Array: # поединок двух сущно
 	for i in 100: # ограничиваем количество ударов чтобы не использовать бесконечный while true
 		var damage: int = participants[attacker].get(DB.KEYS.DAMAGE) # урон атакующего
 		healths[attacker^1] -= damage # уменьшаем здоровье второго участника
+#		print(participants[attacker].get(DB.KEYS.NAME), " бьет ", participants[attacker^1].get(DB.KEYS.NAME), " на ", damage, " ед. урона   [", healths, "]")
 		
 		if healths[attacker^1] <= 0:
 			healths[attacker^1] = 0

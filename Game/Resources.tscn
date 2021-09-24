@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Game/GUI/Action.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Game/GUI/Event_Frame.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Game/Events/GameEvent2.gd" type="Script" id=3]
+[ext_resource path="res://Game/Events/GameEvent1.gd" type="Script" id=4]
 
 [node name="Resources" type="ResourcePreloader"]
-resources = [ PoolStringArray( "Action", "Event_Frame" ), [ ExtResource( 1 ), ExtResource( 2 ) ] ]
+resources = [ PoolStringArray( "Action", "Event_Frame", "GameEvent1", "GameEvent2" ), [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 4 ), ExtResource( 3 ) ] ]

@@ -36,14 +36,22 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 	var frame = Resources.get_resource("Event_Frame").instance() as MarginContainer
 	frame.name += str(_frames.size()) # прибавляем к имени индекс в массиве
 	frame.connect("pressed", self, "_on_frame_pressed", [frame]) # передает ссылку на рамку в качестве аргумента
-	frame.connect("action_pressed", self, "_clear") # скрыть это окно после выбора действия
+	frame.connect("action_pressed", self, "_on_action_pressed") 
 	_event_container.add_child(frame)
 	_frames.append(frame)
 	return frame
 
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
-	
 	selected_frame.show_actions() # добавляем список действий
-	
+	Global.player.connect("entities_changed", self, "_on_player_entities_changed", [selected_frame])
 	visible = true
+
+func _on_player_entities_changed(entities: Array, active_frame: MarginContainer): # обновляем список действий активной рамки, если сущности изменились в момент выбора действий
+	_clear() # очищаем все
+	active_frame.show_actions() # добавляем новый список действий
+	visible = true
+
+func _on_action_pressed(): # выбор одного из действий активной рамки события
+	Global.player.disconnect("entities_changed", self, "_on_player_entities_changed") 
+	_clear() # скрыть это окно после выбора действия

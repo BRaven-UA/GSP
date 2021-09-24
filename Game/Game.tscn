@@ -23,11 +23,10 @@ __meta__ = {
 
 [node name="EntityList" type="ItemList" parent="GUI"]
 visible = false
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_top = -56.0
-margin_right = 160.0
-margin_bottom = 56.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -312.0
+margin_right = 250.0
 focus_mode = 0
 allow_rmb_select = true
 script = ExtResource( 3 )
@@ -40,10 +39,8 @@ margin_right = 10.0
 margin_bottom = 10.0
 
 [node name="Button" type="Button" parent="GUI"]
-margin_left = 18.0
-margin_top = 79.0
-margin_right = 42.0
-margin_bottom = 105.0
+margin_right = 108.0
+margin_bottom = 29.0
 focus_mode = 0
 text = "Начать тест"
 __meta__ = {
@@ -53,7 +50,9 @@ __meta__ = {
 [node name="EventList" type="MarginContainer" parent="GUI"]
 visible = false
 anchor_left = 0.5
+anchor_top = 0.2
 anchor_right = 0.5
+anchor_bottom = 0.2
 margin_left = -6.0
 margin_right = 6.0
 margin_bottom = 12.0
@@ -92,61 +91,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="_EventResults" type="PanelContainer" parent="GUI"]
-visible = false
+[node name="AcceptDialog" type="AcceptDialog" parent="GUI"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -105.0
-margin_top = -71.5
-margin_right = 105.0
-margin_bottom = 71.5
-grow_horizontal = 2
-grow_vertical = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="VBoxContainer" parent="GUI/_EventResults"]
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 205.0
-margin_bottom = 138.0
-
-[node name="Description" type="Label" parent="GUI/_EventResults/VBoxContainer"]
-margin_right = 200.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 200, 100 )
-size_flags_vertical = 7
-text = "Текст события:
-  - новая строка"
-align = 1
-valign = 1
-autowrap = true
-
-[node name="Confirm" type="Button" parent="GUI/_EventResults/VBoxContainer"]
-margin_left = 50.0
-margin_top = 104.0
-margin_right = 150.0
-margin_bottom = 133.0
-rect_min_size = Vector2( 100, 0 )
-focus_mode = 0
-size_flags_horizontal = 4
-size_flags_vertical = 0
-shortcut_in_tooltip = false
-text = "OK"
-
-[node name="EventResults" type="AcceptDialog" parent="GUI"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -135.5
-margin_top = -42.0
-margin_right = 79.5
-margin_bottom = 88.0
+margin_left = -26.5
+margin_top = -35.5
+margin_right = 26.5
+margin_bottom = 35.5
 theme = ExtResource( 2 )
+popup_exclusive = true
 window_title = ""
 __meta__ = {
 "_edit_use_anchors_": false

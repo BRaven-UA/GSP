@@ -22,21 +22,19 @@ func test_start():
 	add_entity(DB.create_entity("Нож"))
 	add_entity(DB.create_entity("Хлеб"))
 	add_entity(DB.create_entity("Собака"))
+	add_entity(DB.create_entity("Дробовик"))
+	var shotgun_ammo = DB.create_entity("Патрон для дробовика")
+	add_entity(shotgun_ammo)
+	change_attribute(shotgun_ammo, DB.KEYS.USES, 10)
 	_player = entities[0]
 
 func change_attribute(entity: Dictionary, key: int, new_value) -> void:
+	new_value = DB.fix_value(entity, key, new_value)
 	if entity[key] == new_value: return # не тратим время на то же самое значение аттрибута
 	
 	match key:
 		DB.KEYS.HEALTH:
-			var current_value = entity[key]
-			
-#			if not (new_value is Vector2):
-#				new_value = Vector2(new_value, current_value.y)
-				
-			new_value.x = clamp(new_value.x, 0.0, current_value.y) # усекаем новое значение до интервала от нуля до максимального
-			
-			if new_value.x == 0.0:
+			if new_value.x < 1:
 				if entity == _player:
 					Global.game.game_over()
 				else:
@@ -64,3 +62,10 @@ func remove_entity(entity: Dictionary) -> void:
 	else:
 		push_warning("Попытка удалить пустой предмет у игрока !")
 		print_stack()
+
+#func merge_entities(primary: Dictionary, secondary: Dictionary) -> Dictionary: # возвращает новую сущность, являющуюся слиянием двух других (например, игрок и предмет)
+#	var result: Dictionary = primary.duplicate()
+#	for key in secondary:
+#		if key in [DB.KEYS.HEALTH, DB.KEYS.DAMAGE, DB.KEYS.CAPACITY]:
+#			result[key] = secondary[key]
+#	return result
