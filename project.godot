@@ -9,31 +9,43 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "Game",
+"base": "GameEntity",
+"class": "GameAbility",
 "language": "GDScript",
-"path": "res://Game/Game.gd"
+"path": "res://Game/Entities/Ability.gd"
+}, {
+"base": "GameEntity",
+"class": "GameCreature",
+"language": "GDScript",
+"path": "res://Game/Entities/Creature.gd"
+}, {
+"base": "Resource",
+"class": "GameEntity",
+"language": "GDScript",
+"path": "res://Game/Entities/Entity.gd"
 }, {
 "base": "Resource",
 "class": "GameEvent",
 "language": "GDScript",
 "path": "res://Game/Event.gd"
 }, {
-"base": "Control",
+"base": "Node",
 "class": "GameGUI",
 "language": "GDScript",
-"path": "res://Game/GUI/GUI.gd"
+"path": "res://Game/GUI.gd"
 }, {
-"base": "Node",
-"class": "GamePlayer",
+"base": "GameEntity",
+"class": "GameItem",
 "language": "GDScript",
-"path": "res://Game/Player.gd"
+"path": "res://Game/Entities/Item.gd"
 } ]
 _global_script_class_icons={
-"Game": "",
+"GameAbility": "",
+"GameCreature": "",
+"GameEntity": "",
 "GameEvent": "",
 "GameGUI": "",
-"GamePlayer": ""
+"GameItem": ""
 }
 
 [application]
@@ -45,9 +57,10 @@ config/icon="res://icon.png"
 
 [autoload]
 
-DB="*res://Game/Database.gd"
-Global="*res://Game/Global.gd"
+Database="*res://Game/Database.gd"
 Resources="*res://Game/Resources.tscn"
+Game="*res://Game/Game.gd"
+EntityManager="*res://Game/EntityManager.gd"
 
 [debug]
 

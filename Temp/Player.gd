@@ -5,7 +5,7 @@
 
 extends Node
 
-class_name GamePlayer
+#class_name GamePlayer
 
 var entities := [] # Сущности игрока (setget на массивах не работает, поэтому доступ должен быть ТОЛЬКО через соотв. методы)
 var _player: Dictionary # ссылка на сущность игрока для повышения читабельности кода

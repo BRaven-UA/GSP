@@ -1,14 +1,12 @@
 # управляет теми частями интерфейса, для которых нет отдельного скрипта или необходимо внешнее управление
 
-extends Control
+extends Node
 
 class_name GameGUI
 
-onready var _accept_dialog: AcceptDialog = get_node("AcceptDialog")
+onready var _root: Control = get_node("/root/GUI")
+onready var _accept_dialog: AcceptDialog = _root.get_node("AcceptDialog")
 
-
-func _enter_tree() -> void:
-	Global.gui = self
 
 func _ready() -> void:
 	var ok_button = _accept_dialog.get_ok()

@@ -2,18 +2,14 @@
 
 extends Node
 
-class_name Game
-
 var _event_scripts := [] # список скриптов для всех событий в игре
 var _available_events := [] # список событий, доступных для выбора игроком
 
 signal new_events(events) # Новые события доступны для выбора, передаем ссылку на массив событий
 
-func _enter_tree() -> void:
-	Global.game = self
-	randomize()
 
 func _ready():
+	randomize()
 	for name in Resources.get_resource_list():
 		if name.begins_with("GameEvent"):
 			_event_scripts.append(Resources.get_resource(name))
