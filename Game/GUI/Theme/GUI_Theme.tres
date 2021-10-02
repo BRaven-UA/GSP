@@ -1,20 +1,26 @@
-[gd_resource type="Theme" load_steps=6 format=2]
+[gd_resource type="Theme" load_steps=8 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Regular_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/BG_Stylebox.tres" type="StyleBox" id=2]
 [ext_resource path="res://Game/GUI/Theme/Clickable_Stylebox.tres" type="StyleBox" id=3]
 [ext_resource path="res://Game/GUI/Theme/Clickable_Hover_Stylebox.tres" type="StyleBox" id=4]
 [ext_resource path="res://Game/GUI/Theme/Clickable_Pressed_Stylebox.tres" type="StyleBox" id=5]
+[ext_resource path="res://Game/GUI/Theme/Health_Stylebox.tres" type="StyleBox" id=6]
+[ext_resource path="res://Game/GUI/Theme/Progress_BG_Stylebox.tres" type="StyleBox" id=7]
 
 [resource]
 default_font = ExtResource( 1 )
 Button/styles/hover = ExtResource( 4 )
 Button/styles/normal = ExtResource( 3 )
 Button/styles/pressed = ExtResource( 5 )
+ItemList/colors/font_color = Color( 1, 1, 1, 1 )
 ItemList/styles/bg = ExtResource( 2 )
 Panel/styles/panel = ExtResource( 2 )
 PanelContainer/styles/panel = ExtResource( 2 )
 PopupMenu/styles/panel = ExtResource( 2 )
+ProgressBar/styles/bg = ExtResource( 7 )
+ProgressBar/styles/fg = ExtResource( 6 )
+RichTextLabel/styles/normal = ExtResource( 2 )
 WindowDialog/constants/title_height = 0
 WindowDialog/icons/close = null
 WindowDialog/styles/panel = ExtResource( 2 )

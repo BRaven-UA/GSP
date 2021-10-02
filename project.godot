@@ -9,43 +9,19 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "GameEntity",
-"class": "GameAbility",
-"language": "GDScript",
-"path": "res://Game/Entities/Ability.gd"
-}, {
-"base": "GameEntity",
-"class": "GameCreature",
-"language": "GDScript",
-"path": "res://Game/Entities/Creature.gd"
-}, {
 "base": "Resource",
 "class": "GameEntity",
 "language": "GDScript",
-"path": "res://Game/Entities/Entity.gd"
+"path": "res://Game/Entity.gd"
 }, {
 "base": "Resource",
 "class": "GameEvent",
 "language": "GDScript",
 "path": "res://Game/Event.gd"
-}, {
-"base": "Node",
-"class": "GameGUI",
-"language": "GDScript",
-"path": "res://Game/GUI.gd"
-}, {
-"base": "GameEntity",
-"class": "GameItem",
-"language": "GDScript",
-"path": "res://Game/Entities/Item.gd"
 } ]
 _global_script_class_icons={
-"GameAbility": "",
-"GameCreature": "",
 "GameEntity": "",
-"GameEvent": "",
-"GameGUI": "",
-"GameItem": ""
+"GameEvent": ""
 }
 
 [application]
@@ -57,14 +33,15 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Database="*res://Game/Database.gd"
 Resources="*res://Game/Resources.tscn"
+Logger="*res://Game/Logger.gd"
 Game="*res://Game/Game.gd"
-EntityManager="*res://Game/EntityManager.gd"
+GUI="*res://Game/GUI.gd"
+E="*res://Game/EntityManager.gd"
 
 [debug]
 
-settings/fps/force_fps=60
+settings/fps/force_fps=10
 gdscript/warnings/unused_variable=false
 gdscript/warnings/unused_argument=false
 gdscript/warnings/unused_signal=false

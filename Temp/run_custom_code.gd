@@ -1,17 +1,8 @@
 tool
 extends EditorScript
 
-var test
-
 func _run():
-	var nodes = _get_all_nodes(get_scene())
-	for node in nodes:
-		print(node.path)
-
-func _get_all_nodes(root: Node, ignored =[], list = []):
-	for node in root.get_children():
-		var path = node.get_path()
-		if !path in ignored:
-			list.append({"path": path})
-			_get_all_nodes(node, ignored, list)
-	return list
+	var plugin = get_editor_interface().get_tree().get_root().get_node("EditorNode/EditorPlugin")
+	print(plugin.current_script.resource_path)
+#	print(plugin.current_textedit.text)
+#	print(plugin.data.folded_lines)

@@ -10,69 +10,60 @@ onready var _menu := $"PopupMenu" # контекстное меню (одно н
 func _ready() -> void:
 	clear()
 	
-	Global.player.connect("entities_changed", self, "_update_list") # обновляем список при любом изменении сущностей игрока
-	connect("item_rmb_selected", self, "_show_menu")
+	E.connect("player_entities_changed", self, "_on_player_entities_changed") # обновляем список при любом изменении сущностей игрока
+	connect("item_rmb_selected", self, "_on_item_rmb_selected")
 	_menu.connect("id_pressed", self, "_on_menu_item_pressed")
 
-func _update_list(entities: Array) -> void: # сюда передается управление по сигналу от player
+func _on_player_entities_changed(entities: Array) -> void: # сюда передается управление по сигналу от player
 	clear()
 	
-	for i in range(0, entities.size()): # в целях отладки игрока включаем в список
-#	for i in range(1, entities.size()): # сущность с нулевым индексом - это игрок, его не добавляем в список
-		_add_item(entities[i])
-	
+	for entity in E.player.get_entities():
+		if entity.get_attribute(E.CLASS) != E.CLASSES.ABILITY:
+			_add_item(entity)
 	
 	set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	visible = get_item_count() as bool # скрываем если пусто
 
-func _add_item(entity: Dictionary) -> void:
-	if entity:
-		var item_text: String = entity[DB.KEYS.NAME]
-		if DB.KEYS.HEALTH in entity: # здоровье (тек./макс.)
-			item_text += " (%d/%d)" % [entity[DB.KEYS.HEALTH].x, entity[DB.KEYS.HEALTH].y]
-		if DB.KEYS.USES in entity: # [кол. использований]
-			item_text += " [%d]" % entity[DB.KEYS.USES]
-		if DB.KEYS.CAPACITY in entity: # заряды [тек./макс.]
-			item_text += " [%d/%d]" % [entity[DB.KEYS.CAPACITY].x, entity[DB.KEYS.CAPACITY].y]
-		add_item(item_text)
-		
-		var tooltip_text := ""
-		var db_keys = DB.KEYS.keys()
-		for key in entity.keys():
-			tooltip_text += "%s: %s\n" % [db_keys[key], entity[key]]
-		
-		var index = get_item_count()
-		set_item_tooltip(index - 1, tooltip_text)
-		set_item_metadata(index - 1, entity) # сохраняем ссылку на сущность
-	else:
-		push_warning("Попытка добавить пустую сущность в EntityList !")
-		print_stack()
+func _add_item(entity: GameEntity) -> void:
+	add_item(entity.get_text())
+	
+	var tooltip_text := ""
+	var player_attributes: Dictionary = entity.get_attributes()
+	for attribute in player_attributes.keys():
+		tooltip_text += "%s: %s\n" % [attribute, player_attributes[attribute]]
+	
+	var index = get_item_count()
+	set_item_tooltip(index - 1, tooltip_text)
+	set_item_metadata(index - 1, entity) # сохраняем ссылку на сущность
 
-func _show_menu(index: int, position: Vector2) -> void: # формирование меню по индексу сущности
+func _on_item_rmb_selected(index: int, position: Vector2) -> void: # формирование меню по индексу сущности
 	_menu.rect_position = rect_position + position + Vector2(10, 0) # устанавливаем позицию меню чуть правее от места клика
 	
 	_menu.clear()
 	
-	var entity = get_item_metadata(index)
+	var entity: GameEntity = get_item_metadata(index)
 	
-	if DB.KEYS.USES in entity:
+	if entity.get_attribute(E.QUANTITY):
 		var submenu_index := 0 # какая же убогая эта система индексов у элементов меню ...
 		
-		if DB.KEYS.RESTOREHEALTH in entity: # если сущность может восстанавливать здоровье
+		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
+		if change_health > 0: # если сущность может восстанавливать здоровье
 			var restore_menu = _get_submenu("RestoreMenu")
-			_menu.add_submenu_item("Восстановить %d здоровья ..." % entity[DB.KEYS.RESTOREHEALTH], "RestoreMenu", -2)
+			_menu.add_submenu_item("Восстановить %d здоровья ..." % change_health, "RestoreMenu", -2)
 			
-			for target in Global.player.entities:
-				if DB.KEYS.HEALTH in target and target[DB.KEYS.TYPE] == DB.TYPES.BIOLOGICAL: # находим все биологические объекты
-					restore_menu.add_item("%s (%d/%d)" % [target[DB.KEYS.NAME], target[DB.KEYS.HEALTH].x, target[DB.KEYS.HEALTH].y], submenu_index)
+			for target in E.player.get_entities(true): # включая самого игрока
+				var health = target.get_attribute(E.HEALTH)
+				if health and target.get_attribute(E.TYPE) == E.TYPES.BIOLOGICAL: # находим все биологические объекты
+					restore_menu.add_item(target.get_text(), submenu_index)
 					restore_menu.set_item_metadata(submenu_index, target) # сохраняем ссылку на целевую сущность
 					submenu_index += 1
+		
 		var load_menu = _get_submenu("LoadMenu")
-		for target in Global.player.entities:
-			if target.get(DB.KEYS.CONSUMABLES) == entity[DB.KEYS.NAME]: # ищем, является ли данная сущность расходником к другим
-				var target_capacity: Vector2 = target[DB.KEYS.CAPACITY]
+		for target in E.player.get_entities():
+			if target.get_attribute(E.CONSUMABLES) == entity.get_attribute(E.NAME): # ищем, является ли данная сущность расходником к другим
+				var target_capacity: Vector2 = target.get_attribute(E.CAPACITY)
 				if target_capacity.x < target_capacity.y: # если возможно пополнение
-					load_menu.add_item("%s [%d/%d]" % [target[DB.KEYS.NAME], target_capacity.x, target_capacity.y], submenu_index)
+					load_menu.add_item(target.get_text(), submenu_index)
 					load_menu.set_item_metadata(submenu_index, target) # сохраняем ссылку на целевую сущность
 					submenu_index += 1
 		
@@ -98,24 +89,21 @@ func _get_submenu(name: String) -> PopupMenu: # ищем подменю с ук�
 	return submenu
 
 func _on_menu_item_pressed(index: int) -> void: # обработка нажатий на пункты контекстного меню
-	var entity = _menu.get_meta("entity")
+	var entity: GameEntity = _menu.get_meta("entity")
 		
 	match index:
 		MENU_ITEMS.DELETE:
-			Global.player.remove_entity(entity)
+			E.player.remove_entity(entity)
 
 func _on_submenu_item_pressed(index: int, submenu: PopupMenu):
-	var entity = _menu.get_meta("entity")
-	var target = submenu.get_item_metadata(index)
+	var entity: GameEntity = _menu.get_meta("entity")
+	var target: GameEntity = submenu.get_item_metadata(index)
 	
 	match submenu.name:
 		"RestoreMenu":
-			var new_health = target[DB.KEYS.HEALTH].x + entity[DB.KEYS.RESTOREHEALTH]
-			Global.player.change_attribute(target, DB.KEYS.HEALTH, new_health)
-			Global.player.change_attribute(entity, DB.KEYS.USES, entity[DB.KEYS.USES] - 1)
+			target.change_attribute(E.HEALTH, entity.get_attribute(E.CHANGE_HEALTH, false))
+			entity.change_attribute(E.QUANTITY, -1)
 		
 		"LoadMenu":
-			var needed = target[DB.KEYS.CAPACITY].y - target[DB.KEYS.CAPACITY].x
-			var can_give = min(needed, entity[DB.KEYS.USES])
-			Global.player.change_attribute(target, DB.KEYS.CAPACITY, target[DB.KEYS.CAPACITY].x + can_give)
-			Global.player.change_attribute(entity, DB.KEYS.USES, entity[DB.KEYS.USES] - can_give)
+			var surplus = target.change_attribute(E.CAPACITY, entity.get_attribute(E.QUANTITY))
+			entity.set_attribute(E.QUANTITY, surplus)

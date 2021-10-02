@@ -5,7 +5,7 @@
 [ext_resource path="res://Game/GUI/EntityList.gd" type="Script" id=3]
 [ext_resource path="res://Game/Game.gd" type="Script" id=4]
 [ext_resource path="res://Game/GUI/EventList.gd" type="Script" id=5]
-[ext_resource path="res://Game/GUI/Separator_Texture.tres" type="Texture" id=6]
+[ext_resource path="res://Game/GUI/Theme/Separator_Texture.tres" type="Texture" id=6]
 [ext_resource path="res://Game/GUI/Theme/Caption_Font.tres" type="DynamicFont" id=7]
 [ext_resource path="res://Game/GUI/EventFrame.gd" type="Script" id=8]
 

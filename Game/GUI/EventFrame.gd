@@ -32,7 +32,7 @@ func show_actions() -> void: # формирование списка возмо�
 	
 	for action in _event.actions:
 		var button = _get_button() # получаем ссылку на пустую кнопку
-		button.get_node("Button").text = action.Action_text
+		button.get_node("Button").text = action.Text
 		button.visible = true
 	
 	visible = true

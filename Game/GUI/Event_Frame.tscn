@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Game/GUI/Separator_Texture.tres" type="Texture" id=1]
+[ext_resource path="res://Game/GUI/Theme/Separator_Texture.tres" type="Texture" id=1]
 [ext_resource path="res://Game/GUI/Theme/Caption_Font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Game/GUI/EventFrame.gd" type="Script" id=4]
 
