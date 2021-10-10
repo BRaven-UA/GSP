@@ -7,9 +7,9 @@ onready var _frames := [] # пул рамок для отображения со
 
 
 func _ready() -> void:
-	Global.game.connect("new_events", self, "update_frames")
+	Game.connect("new_events", self, "_on_new_events")
 
-func update_frames(events: Array) -> void: # заполняет рамки из пула данными из списка доступных событий. Вызывается по событию new_events от Game
+func _on_new_events(events: Array) -> void: # заполняет рамки из пула данными из списка доступных событий. Вызывается по событию new_events от Game
 	_clear()
 	
 	for event in events:
@@ -27,6 +27,7 @@ func _clear(exception: MarginContainer = null) -> void: # очищает все 
 			frame.clear()
 	
 	set_anchors_and_margins_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE) # восстанавливаем исходный размер и позицию
+	set_anchor(MARGIN_TOP, 0.2, true) # немного отодвигаем до верхнего края
 
 func _get_frame() -> Button: # ищет в пуле незанятую рамку или создает новую
 	for frame in _frames:
@@ -44,7 +45,7 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
 	selected_frame.show_actions() # добавляем список действий
-	Global.player.connect("entities_changed", self, "_on_player_entities_changed", [selected_frame])
+	E.connect("player_entities_changed", self, "_on_player_entities_changed", [selected_frame])
 	visible = true
 
 func _on_player_entities_changed(entities: Array, active_frame: MarginContainer): # обновляем список действий активной рамки, если сущности изменились в момент выбора действий
@@ -53,5 +54,5 @@ func _on_player_entities_changed(entities: Array, active_frame: MarginContainer)
 	visible = true
 
 func _on_action_pressed(): # выбор одного из действий активной рамки события
-	Global.player.disconnect("entities_changed", self, "_on_player_entities_changed") 
+	E.disconnect("player_entities_changed", self, "_on_player_entities_changed") 
 	_clear() # скрыть это окно после выбора действия

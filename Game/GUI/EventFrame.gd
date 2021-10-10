@@ -24,7 +24,8 @@ func init(event: GameEvent) -> void: # формирование окна соб�
 
 func show_actions() -> void: # формирование списка возможных действий для события
 	_caption.text = _event.name
-	_description.visible = false # детальное описание и разграничитель на этом этапе не нужны
+	_description.text = _event.description
+#	_description.visible = false # детальное описание и разграничитель на этом этапе не нужны
 	_separator.visible = false
 	_button.mouse_filter = Control.MOUSE_FILTER_IGNORE # чтобы нельзя было триггерить кнопку
 	
@@ -32,7 +33,7 @@ func show_actions() -> void: # формирование списка возмо�
 	
 	for action in _event.actions:
 		var button = _get_button() # получаем ссылку на пустую кнопку
-		button.get_node("Button").text = action.Action_text
+		button.get_node("Button").text = action.Text
 		button.visible = true
 	
 	visible = true

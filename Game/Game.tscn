@@ -1,32 +1,38 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Game/Player.gd" type="Script" id=1]
+[ext_resource path="res://Game/GUI/Theme/Small_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
 [ext_resource path="res://Game/GUI/EntityList.gd" type="Script" id=3]
-[ext_resource path="res://Game/Game.gd" type="Script" id=4]
+[ext_resource path="res://Game/GUI/Theme/Caption_Font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://Game/GUI/EventList.gd" type="Script" id=5]
-[ext_resource path="res://Game/GUI/GUI.gd" type="Script" id=6]
+[ext_resource path="res://Game/GUI/TradePanel.gd" type="Script" id=6]
 
-[node name="Game" type="Node"]
-script = ExtResource( 4 )
-
-[node name="Player" type="Node" parent="."]
-script = ExtResource( 1 )
-
-[node name="GUI" type="Control" parent="."]
+[node name="MainControl" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 6 )
+margin_top = 2.0
+margin_bottom = 2.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EntityList" type="ItemList" parent="GUI"]
-visible = false
-anchor_top = 1.0
+[node name="Log" type="RichTextLabel" parent="."]
+self_modulate = Color( 1, 1, 1, 0.466667 )
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -312.0
-margin_right = 250.0
+grow_horizontal = 0
+rect_min_size = Vector2( 300, 50 )
+custom_fonts/normal_font = ExtResource( 1 )
+custom_constants/line_separation = -5
+scroll_following = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EntityList" type="ItemList" parent="."]
+anchor_bottom = 1.0
+rect_min_size = Vector2( 250, 0 )
 focus_mode = 0
 allow_rmb_select = true
 script = ExtResource( 3 )
@@ -34,20 +40,55 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PopupMenu" type="PopupMenu" parent="GUI/EntityList"]
+[node name="PopupMenu" type="PopupMenu" parent="EntityList"]
 margin_right = 10.0
 margin_bottom = 10.0
 
-[node name="Button" type="Button" parent="GUI"]
-margin_right = 108.0
-margin_bottom = 29.0
-focus_mode = 0
-text = "Начать тест"
+[node name="HealthBar" type="ProgressBar" parent="."]
+anchor_left = 0.5
+anchor_top = 0.98
+anchor_right = 0.5
+anchor_bottom = 0.98
+margin_left = -101.0
+margin_top = -29.0
+margin_right = 101.0
+value = 75.0
+rounded = true
+percent_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EventList" type="MarginContainer" parent="GUI"]
+[node name="Label" type="Label" parent="HealthBar"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -27.0
+margin_top = -9.0
+margin_right = 27.0
+margin_bottom = 9.0
+grow_horizontal = 0
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.584314 )
+custom_constants/shadow_as_outline = 1
+text = "75/100"
+align = 1
+valign = 1
+max_lines_visible = 1
+
+[node name="TestButton" type="Button" parent="."]
+anchor_left = 0.439453
+anchor_top = 0.863333
+anchor_right = 0.544922
+anchor_bottom = 0.913333
+focus_mode = 0
+text = "Начать тест"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="EventList" type="MarginContainer" parent="."]
 visible = false
 anchor_left = 0.5
 anchor_top = 0.2
@@ -62,14 +103,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Background" type="Panel" parent="GUI/EventList"]
+[node name="Background" type="Panel" parent="EventList"]
 margin_right = 12.0
 margin_bottom = 12.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="GUI/EventList"]
+[node name="MarginContainer" type="MarginContainer" parent="EventList"]
 margin_right = 12.0
 margin_bottom = 12.0
 custom_constants/margin_right = 6
@@ -80,7 +121,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EventContainer" type="HBoxContainer" parent="GUI/EventList/MarginContainer"]
+[node name="EventContainer" type="HBoxContainer" parent="EventList/MarginContainer"]
 margin_left = 6.0
 margin_top = 6.0
 margin_right = 6.0
@@ -91,7 +132,118 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AcceptDialog" type="AcceptDialog" parent="GUI"]
+[node name="TradePanel" type="Panel" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -160.0
+margin_top = -135.0
+margin_right = 160.0
+margin_bottom = 135.0
+rect_min_size = Vector2( 320, 270 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TradePanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -150.0
+margin_top = -125.0
+margin_right = 150.0
+margin_bottom = 125.0
+rect_min_size = Vector2( 300, 250 )
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="ItemList" parent="TradePanel/VBoxContainer"]
+margin_right = 300.0
+margin_bottom = 152.0
+focus_mode = 0
+size_flags_vertical = 3
+select_mode = 1
+allow_rmb_select = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Menu" type="PopupMenu" parent="TradePanel/VBoxContainer/ItemList"]
+margin_right = 10.0
+margin_bottom = 10.0
+items = [ "Отделить 1 шт.", null, 0, false, false, 0, 0, null, "", false, "+1 шт.", null, 0, false, false, 1, 0, null, "", false, "-1 шт.", null, 0, false, true, 2, 0, null, "", false ]
+hide_on_item_selection = false
+hide_on_checkable_item_selection = false
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
+margin_top = 162.0
+margin_right = 300.0
+margin_bottom = 214.0
+
+[node name="StaticText" type="Label" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+margin_right = 175.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 0, 52 )
+size_flags_horizontal = 11
+size_flags_stretch_ratio = 0.6
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 0.435294, 0.623529, 0.807843, 1 )
+text = "Ваш товар:
+Товар торговца:"
+align = 2
+valign = 2
+max_lines_visible = 2
+
+[node name="Cost" type="Label" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+margin_left = 179.0
+margin_right = 237.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 0, 52 )
+size_flags_horizontal = 11
+size_flags_stretch_ratio = 0.2
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 0.435294, 0.623529, 0.807843, 1 )
+align = 2
+valign = 2
+max_lines_visible = 2
+
+[node name="Dummy" type="Control" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+margin_left = 241.0
+margin_right = 300.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
+margin_top = 224.0
+margin_right = 300.0
+margin_bottom = 250.0
+alignment = 1
+
+[node name="Confirm" type="Button" parent="TradePanel/VBoxContainer/HBoxContainer"]
+margin_left = 34.0
+margin_right = 114.0
+margin_bottom = 26.0
+size_flags_horizontal = 6
+disabled = true
+shortcut_in_tooltip = false
+text = "  ОБМЕН  "
+
+[node name="Cancel" type="Button" parent="TradePanel/VBoxContainer/HBoxContainer"]
+margin_left = 177.0
+margin_right = 275.0
+margin_bottom = 26.0
+size_flags_horizontal = 6
+shortcut_in_tooltip = false
+text = "  ЗАКРЫТЬ  "
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -106,5 +258,3 @@ window_title = ""
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[connection signal="pressed" from="GUI/Button" to="." method="test_start"]

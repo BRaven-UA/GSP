@@ -1,4 +1,4 @@
-# Базовый класс для событий в игре. Классы-наследники сохраняются в отдельных файлах и переопределяют виртуальные методы, в которых реализуют свою уникальную логику
+# Базовый класс для событий в игре. Классы-наследники сохраняются в отдельных файлах и переопределяют виртуальные методы или добавляют новые методы, в которых реализуют свою уникальную логику
 
 extends Resource
 
@@ -6,11 +6,14 @@ class_name GameEvent
 
 var name: String # заголовок события
 var description: String # описание события до того как игрок получит перечень возможных действий
-var entities: Array # прикрепленные к событию сущности (если есть)
+#var entities: Array # прикрепленные к событию сущности (если есть)
+var probability := 1.0 # вероятность появления события в списке доступных (0-1)
 var actions: Array # список действий для данного события
-var _player_entities: Array = Global.player.entities # ссылка на все сущности игрока
-var _player: Dictionary = _player_entities[0] # ссылка на сущность самого игрока
+#var _player: GameEntity = E.player # ссылка на сущность игрока
+#var _player_entities: Array = Global.player.entities # ссылка на все сущности игрока
 
+func is_available() -> bool: # если событие содержит условия возникновения, переопределить этот виртуальный метод и вернуть булево значение выполнены требования или нет
+	return true
 
 func update_actions(): # формирует список возможных действий, исходя из атрибутов игрока и его предметов
 	actions.clear()
@@ -19,45 +22,51 @@ func update_actions(): # формирует список возможных де
 func _define_actions(): # сформировать список возможных действий (виртуальный метод для переопределения в классах-наследниках)
 	pass
 
-func _add_action(action_text := "", result_text := "", changes := []): # добавление нового действия в список
-	var new_action = {}
-	new_action.Action_text = action_text # текст для кнопки
-	new_action.Result_text = result_text # текст для окна результатов события
-	new_action.Changes = changes # список изменений по результатам события
+func _add_action(action_text: String, method: String, arguments := [], activate_entity: GameEntity = null): # добавление нового действия в список
+	var new_action = {Text = action_text, Method = method, Arguments = arguments, Entity = activate_entity}
 	actions.append(new_action)
 
 func apply_action(index: int) -> void: # применить указанное действие
 	var action = actions[index]
 	
-	var dialog = Global.gui.show_accept_dialog(action.Result_text)
-	yield(dialog, "confirmed")
+	var entity = action.Entity
+	if entity:
+		E.player.activate_entity(entity)
+	var result_text = callv(action.Method, action.Arguments)
+	if entity:
+		E.player.deactivate_entity(entity)
 	
-	for change in action.Changes: # изменений может быть несколько
-		if change.get(DB.KEYS.NAME): # передана сущность вместо словаря с изменением
-			Global.player.add_entity(change)
-		else:
-			Global.player.change_attribute(change.Target, change.Key, change.Value)
-	
-	Global.game.update_events()
+	GUI.show_accept_dialog(result_text)
 
-func _get_change(target: Dictionary, key: int, new_value) -> Dictionary: # функция-подсказка чтобы видеть состав словаря
-	return {"Target":target, "Key":key, "Value":new_value}
+func _add_hostile_actions(target: GameEntity, text := "Напасть"): # стандартная наборка из всех возможных вариантов нападения на цель
+	for entity in E.player.get_entities():
+		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
+		if change_health < 0: # отнимает здоровье
+			var charges = entity.get_attribute(E.CAPACITY, true, Vector2(1, 1)) # один заряд для проверки на заряды
+			if charges.x: # есть заряды
+				var entity_text = "" if entity == E.player else ", используя " + entity.get_text()
+				var action_text = "%s%s (урон %d)" % [text, entity_text, abs(change_health)]
+				var attacker = entity if entity.get_attribute(E.HEALTH) else E.player
+				_add_action(action_text, "_duel", [target, attacker], entity)
 
-func _duel(participants: Array) -> Array: # поединок двух сущностей, обмен ударами по очереди до смерти. Возвращает массив из двух значений здоровья каждого участника
-	var healths := [int(participants[0].get(DB.KEYS.HEALTH).x), int(participants[1].get(DB.KEYS.HEALTH).x)] # начальные значения здоровья
-	var attacker := 0 # индекс в массиве для атакующего
+func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # нападающий указан последним т.к. опционален
+	var result_text := "\n%s нападает на %s" % [attacker.get_text(), defender.get_text()]
+	var attacker_start_health = attacker.get_attribute(E.HEALTH).x
+	var defender_start_health = defender.get_attribute(E.HEALTH).x
 	
-	for i in 100: # ограничиваем количество ударов чтобы не использовать бесконечный while true
-		var damage: int = participants[attacker].get(DB.KEYS.DAMAGE) # урон атакующего
-		healths[attacker^1] -= damage # уменьшаем здоровье второго участника
-#		print(participants[attacker].get(DB.KEYS.NAME), " бьет ", participants[attacker^1].get(DB.KEYS.NAME), " на ", damage, " ед. урона   [", healths, "]")
-		
-		if healths[attacker^1] <= 0:
-			healths[attacker^1] = 0
-			return healths
-		
-		attacker = attacker^1 # меняем атакующего
+	E.duel(defender, attacker)
 	
-	push_warning("Количество обменов ударами в дуэли превысило допустимое значение!")
-	print_stack()
-	return []
+	result_text += ".\nРезультаты поединка:"
+	var attacker_health = attacker.get_attribute(E.HEALTH).x
+	result_text += "\n- %s: потеряно %d здоровья" % [attacker.get_attribute(E.NAME), attacker_start_health - attacker_health]
+	if not attacker_health:
+		result_text += " (смерть)"
+	
+	var defender_health = defender.get_attribute(E.HEALTH).x
+	result_text += "\n- %s: потеряно %d здоровья" % [defender.get_attribute(E.NAME), defender_start_health - defender_health]
+	if not defender_health:
+		result_text += " (смерть)"
+	
+	result_text += "\n"
+	
+	return result_text

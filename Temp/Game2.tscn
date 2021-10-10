@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Game/Player.gd" type="Script" id=1]
+[ext_resource path="res://Temp/Player.gd" type="Script" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
 [ext_resource path="res://Game/GUI/EntityList.gd" type="Script" id=3]
 [ext_resource path="res://Game/Game.gd" type="Script" id=4]
 [ext_resource path="res://Game/GUI/EventList.gd" type="Script" id=5]
-[ext_resource path="res://Game/GUI/Separator_Texture.tres" type="Texture" id=6]
+[ext_resource path="res://Game/GUI/Theme/Separator_Texture.tres" type="Texture" id=6]
 [ext_resource path="res://Game/GUI/Theme/Caption_Font.tres" type="DynamicFont" id=7]
 [ext_resource path="res://Game/GUI/EventFrame.gd" type="Script" id=8]
 
