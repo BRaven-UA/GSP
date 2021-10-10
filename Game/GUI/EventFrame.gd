@@ -24,7 +24,8 @@ func init(event: GameEvent) -> void: # формирование окна соб�
 
 func show_actions() -> void: # формирование списка возможных действий для события
 	_caption.text = _event.name
-	_description.visible = false # детальное описание и разграничитель на этом этапе не нужны
+	_description.text = _event.description
+#	_description.visible = false # детальное описание и разграничитель на этом этапе не нужны
 	_separator.visible = false
 	_button.mouse_filter = Control.MOUSE_FILTER_IGNORE # чтобы нельзя было триггерить кнопку
 	

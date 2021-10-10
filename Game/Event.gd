@@ -7,11 +7,13 @@ class_name GameEvent
 var name: String # заголовок события
 var description: String # описание события до того как игрок получит перечень возможных действий
 #var entities: Array # прикрепленные к событию сущности (если есть)
-var requirements: Dictionary # условия попадания события в список доступных для выбора игроком
 var probability := 1.0 # вероятность появления события в списке доступных (0-1)
 var actions: Array # список действий для данного события
 #var _player: GameEntity = E.player # ссылка на сущность игрока
 #var _player_entities: Array = Global.player.entities # ссылка на все сущности игрока
+
+func is_available() -> bool: # если событие содержит условия возникновения, переопределить этот виртуальный метод и вернуть булево значение выполнены требования или нет
+	return true
 
 func update_actions(): # формирует список возможных действий, исходя из атрибутов игрока и его предметов
 	actions.clear()
@@ -34,21 +36,21 @@ func apply_action(index: int) -> void: # применить указанное �
 	if entity:
 		E.player.deactivate_entity(entity)
 	
-	var dialog = GUI.show_accept_dialog(result_text)
+	GUI.show_accept_dialog(result_text)
 
-func _add_hostile_actions(target: GameEntity): # стандартная наборка из всех возможных вариантов нападения на цель
+func _add_hostile_actions(target: GameEntity, text := "Напасть"): # стандартная наборка из всех возможных вариантов нападения на цель
 	for entity in E.player.get_entities():
 		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
 		if change_health < 0: # отнимает здоровье
 			var charges = entity.get_attribute(E.CAPACITY, true, Vector2(1, 1)) # один заряд для проверки на заряды
 			if charges.x: # есть заряды
 				var entity_text = "" if entity == E.player else ", используя " + entity.get_text()
-				var action_text = "Напасть%s (урон %d)" % [entity_text, abs(change_health)]
+				var action_text = "%s%s (урон %d)" % [text, entity_text, abs(change_health)]
 				var attacker = entity if entity.get_attribute(E.HEALTH) else E.player
 				_add_action(action_text, "_duel", [target, attacker], entity)
 
 func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # нападающий указан последним т.к. опционален
-	var result_text := "%s нападает на %s" % [attacker.get_text(), defender.get_text()]
+	var result_text := "\n%s нападает на %s" % [attacker.get_text(), defender.get_text()]
 	var attacker_start_health = attacker.get_attribute(E.HEALTH).x
 	var defender_start_health = defender.get_attribute(E.HEALTH).x
 	
@@ -64,5 +66,7 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # �
 	result_text += "\n- %s: потеряно %d здоровья" % [defender.get_attribute(E.NAME), defender_start_health - defender_health]
 	if not defender_health:
 		result_text += " (смерть)"
+	
+	result_text += "\n"
 	
 	return result_text

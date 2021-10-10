@@ -84,7 +84,8 @@ func save_current_data():
 
 func set_folded_lines(textedit:TextEdit, script_path:String):
 	for i in folded_lines.get(script_path, []):
-		textedit.fold_line(i)
+		if i < textedit.get_line_count(): # TODO разобраться с битыми записями
+			textedit.fold_line(i)
 
 func set_bookmarks(textedit:TextEdit, script_path:String):
 	for i in bookmarks.get(script_path, []):

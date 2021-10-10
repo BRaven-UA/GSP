@@ -36,7 +36,7 @@ config/icon="res://icon.png"
 Resources="*res://Game/Resources.tscn"
 Logger="*res://Game/Logger.gd"
 Game="*res://Game/Game.gd"
-GUI="*res://Game/GUI.gd"
+GUI="*res://Game/GUI/GUI.gd"
 E="*res://Game/EntityManager.gd"
 
 [debug]

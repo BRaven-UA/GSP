@@ -6,16 +6,21 @@ extends Node
 
 onready var _root: Control = get_node("/root/MainControl")
 onready var _accept_dialog: AcceptDialog = _root.get_node("AcceptDialog")
+onready var _trade_panel: Panel = _root.get_node("TradePanel")
 onready var _log_frame: RichTextLabel = _root.get_node("Log")
+onready var _entity_list: ItemList = _root.get_node("EntityList")
 onready var _health_bar: ProgressBar = _root.get_node("HealthBar")
 onready var _health_bar_label: Label = _health_bar.get_node("Label")
 
 signal results_confirmed # сообщает что пользователь закрыл окно с результатами события
+signal trade_complete # сообщает о закрытии окна торговли
 
 func _ready() -> void:
 	_root.get_node("TestButton").connect("pressed", Game, "test_start") # только для тестирования
+	
 	Logger.connect("new_log_record", self, "_on_new_log_record")
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
+	_trade_panel.player_item_list = _entity_list
 	_accept_dialog.connect("confirmed", self, "_on_accept_dialog_confirmed")
 	
 	var ok_button = _accept_dialog.get_ok()
@@ -25,12 +30,16 @@ func _ready() -> void:
 	label.valign = Label.VALIGN_CENTER
 
 func show_accept_dialog(text: String): # отображение информационного окна с одной кнопкой "ОК"
-	_accept_dialog.dialog_text = text
-	_accept_dialog.set_as_minsize()
-	_accept_dialog.popup_centered_clamped(Vector2(250, 200))
+	if text:
+		_accept_dialog.dialog_text = text
+		_accept_dialog.set_as_minsize()
+		_accept_dialog.popup_centered_clamped(Vector2(250, 200))
 	
-	var ok_button = _accept_dialog.get_ok()
-	ok_button.release_focus() # не смотрится когда сразу подсвечено
+		var ok_button = _accept_dialog.get_ok()
+		ok_button.release_focus() # не смотрится когда сразу подсвечено
+
+func show_trade_panel(merchant: GameEntity): # отображение окна торговли с игровой сущностью
+	_trade_panel.show_panel(merchant)
 
 func _on_accept_dialog_confirmed(): # пользователь закрыл окно с результатами события
 	emit_signal("results_confirmed")
@@ -39,7 +48,7 @@ func _on_new_log_record(info: String): # обновляется по сигна�
 	_log_frame.add_text(info)
 	_log_frame.newline()
 
-func _on_player_entities_changed(entities): # для обновления полоски здоровья
+func _on_player_entities_changed(entities: Array): # для обновления полоски здоровья
 	var player_health = E.player.get_attribute(E.HEALTH)
 	_health_bar.max_value = player_health.y
 	_health_bar.value = player_health.x

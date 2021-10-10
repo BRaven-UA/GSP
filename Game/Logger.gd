@@ -29,10 +29,10 @@ func debug(text: String): # добавление отладочной инфор
 func _get_as_text(record: Dictionary) -> String: # возвращает запись в виде строки
 	return "[{Time}] {Text}".format(record)
 
-func _notification(what: int) -> void: # сохраняем на диск при закрытии приложения
-	if what == NOTIFICATION_WM_QUIT_REQUEST:
-		var file = File.new()
-		var error = file.open("res://Log.txt", File.WRITE)
-		if not error:
-			file.store_string(to_json(_records))
-			file.close()
+#func _notification(what: int) -> void: # сохраняем на диск при закрытии приложения
+#	if what == NOTIFICATION_WM_QUIT_REQUEST:
+#		var file = File.new()
+#		var error = file.open("res://Game/Log.txt", File.WRITE)
+#		if not error:
+#			file.store_string(to_json(_records))
+#			file.close()

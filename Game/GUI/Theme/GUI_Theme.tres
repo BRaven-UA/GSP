@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=8 format=2]
+[gd_resource type="Theme" load_steps=11 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Regular_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/BG_Stylebox.tres" type="StyleBox" id=2]
@@ -7,14 +7,24 @@
 [ext_resource path="res://Game/GUI/Theme/Clickable_Pressed_Stylebox.tres" type="StyleBox" id=5]
 [ext_resource path="res://Game/GUI/Theme/Health_Stylebox.tres" type="StyleBox" id=6]
 [ext_resource path="res://Game/GUI/Theme/Progress_BG_Stylebox.tres" type="StyleBox" id=7]
+[ext_resource path="res://Game/GUI/Theme/Disabled_Stylebox.tres" type="StyleBox" id=8]
+[ext_resource path="res://Game/GUI/Theme/Selected_Flat.tres" type="StyleBox" id=9]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 0, 0, 1 )
 
 [resource]
 default_font = ExtResource( 1 )
+Button/styles/disabled = ExtResource( 8 )
+Button/styles/focus = ExtResource( 3 )
 Button/styles/hover = ExtResource( 4 )
 Button/styles/normal = ExtResource( 3 )
 Button/styles/pressed = ExtResource( 5 )
 ItemList/colors/font_color = Color( 1, 1, 1, 1 )
 ItemList/styles/bg = ExtResource( 2 )
+ItemList/styles/cursor = SubResource( 1 )
+ItemList/styles/selected = ExtResource( 9 )
+ItemList/styles/selected_focus = ExtResource( 9 )
 Panel/styles/panel = ExtResource( 2 )
 PanelContainer/styles/panel = ExtResource( 2 )
 PopupMenu/styles/panel = ExtResource( 2 )

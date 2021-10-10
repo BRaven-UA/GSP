@@ -26,7 +26,7 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # �
 	var result_text = ._duel(defender,attacker) # вызываем стандартный метод
 	
 	if dog.get_attribute(E.HEALTH).x < 1: # добавляем лут
-		E.player.add_entity(E.create_entity("Мясо")) # мясо мертвой собаки
+		E.player.add_entity(E.create_entity("Мясо", {E.QUANTITY:3})) # мясо мертвой собаки
 	return result_text
 
 func _feed(food: GameEntity) -> String:
