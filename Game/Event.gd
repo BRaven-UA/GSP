@@ -67,6 +67,6 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # �
 	if not defender_health:
 		result_text += " (смерть)"
 	
-	result_text += "\n"
+	result_text += "\n\n"
 	
 	return result_text

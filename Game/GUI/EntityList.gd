@@ -151,7 +151,8 @@ func _on_menu_item_pressed(index: int) -> void: # обработка нажат�
 			E.player.remove_entity(entity)
 		
 		MENU_ITEMS.SORT:
-			sort_items_by_text()
+			E.player.get_entities().sort_custom(E, "_sort_entities")
+			_on_player_entities_changed(E.player.get_entities())
 
 func _on_submenu_item_pressed(index: int, submenu: PopupMenu):
 	var entity: GameEntity = _menu.get_meta("entity")

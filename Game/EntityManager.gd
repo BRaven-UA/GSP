@@ -94,7 +94,7 @@ func create_person(possible_weapons := [], health := 0) -> GameEntity: # соз�
 		
 		var capacity = weapon_data.get(CAPACITY)
 		if capacity:
-			weapon_data[CAPACITY].x = 1 + randi() % capacity.y # случайное количество зарядов
+			weapon_data[CAPACITY].x = 1 + randi() % int(capacity.y) # случайное количество зарядов
 		
 		person.add_entity(create_entity(weapon_data), true) # сразу активируем
 	

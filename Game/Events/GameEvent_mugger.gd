@@ -15,7 +15,7 @@ func _define_actions():
 
 func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 	var result_text := "Вы решили, что лучшая защита - это нападение и\n"
-	result_text += "сами напали на ублюдка." if attacker == E.player else "натравили на ублюдка %s, в надежде выиграть\nвремя для бегства." % attacker.get_attribute(E.NAME)
+	result_text += "сами напали на ублюдка.\n" if attacker == E.player else "натравили %s на ублюдка, в надежде выиграть\nвремя для бегства.\n" % attacker.get_attribute(E.NAME)
 	result_text += ._duel(defender, attacker)
 	
 	if mugger.get_attribute(E.HEALTH).x < 1: # грабитель убит
@@ -77,7 +77,7 @@ func _escape() -> String:
 		if min_health < max_health:
 			var new_health = rand_range(min_health, max_health)
 			E.player.set_attribute(E.HEALTH, new_health)
-			result_text += ", избил (-%d здоровья)" % health.x - new_health
+			result_text += ", избил (-%d здоровья)" % (health.x - new_health)
 		
 		result_text += " и отобрал все ценное." + _loss_items()
 	
