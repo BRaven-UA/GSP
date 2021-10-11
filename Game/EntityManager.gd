@@ -53,13 +53,13 @@ const ENTITIES := [
 	]
 
 
-func get_base_entity(name: String) -> Dictionary: # ссылка на базовые атрибуты сущности
+func get_base_entity(name: String) -> Dictionary: # возвращает копию словаря с базовыми данными сущности
 	for entity_data in ENTITIES:
 		if entity_data[NAME] == name:
 			return entity_data.duplicate() # иначе будет все изменения будут происходить с дефолтными данными
 	return {}
 
-func create_entity(data, custom_attributes := {}) -> GameEntity: # создает новый экземпляр класса
+func create_entity(data, custom_attributes := {}) -> GameEntity: # создает новую сущность по имени или по словарю данных
 	if data is String:
 		data = get_base_entity(data)
 	
@@ -80,6 +80,26 @@ func create_entity(data, custom_attributes := {}) -> GameEntity: # создае�
 	
 	return new_entity
 
+func create_person(possible_weapons := [], health := 0) -> GameEntity: # создает сущность человека с заданным здоровьем и оружием
+	if not health:
+		health = 1 + randi() % 100 # здоровье от 1 до 100
+	if not possible_weapons:
+		possible_weapons = [{"Ничего":1}, {"Нож":0.6}, {"Топор":0.4}, {"Пистолет":0.3}, {"Охотничья винтовка":0.2}]
+	
+	var person = create_entity("Человек", {HEALTH:Vector2(health, 100)})
+	var weapon_name = randw(possible_weapons)
+	
+	if weapon_name != "Ничего":
+		var weapon_data = get_base_entity(weapon_name)
+		
+		var capacity = weapon_data.get(CAPACITY)
+		if capacity:
+			weapon_data[CAPACITY].x = 1 + randi() % capacity.y # случайное количество зарядов
+		
+		person.add_entity(create_entity(weapon_data), true) # сразу активируем
+	
+	return person
+
 func _on_entity_changed(entity: GameEntity):
 	if entity == player or entity.owner == player:
 		emit_signal("player_entities_changed", player.get_entities()) # сингла для элементов GUI
@@ -96,10 +116,10 @@ func duel(defender: GameEntity, attacker: GameEntity = player): # нападаю
 	var current := 0 # индекс в массиве для текущего участника
 	
 	for i in 100: # ограничиваем количество ударов чтобы не использовать бесконечный while true
-		var damage_source = participants[current].get_attribute_owner(E.CHANGE_HEALTH)
-		var damage: int = damage_source.get_attribute(E.CHANGE_HEALTH)
-		damage_source.owner.change_attribute(E.CAPACITY) # расходуем заряд (если можно)
-		var surplus = participants[current^1].change_attribute(E.HEALTH, damage, false) # меняем здоровье второго участника
+		var damage_source = participants[current].get_attribute_owner(CHANGE_HEALTH)
+		var damage: int = damage_source.get_attribute(CHANGE_HEALTH)
+		damage_source.owner.change_attribute(CAPACITY) # расходуем заряд (если можно)
+		var surplus = participants[current^1].change_attribute(HEALTH, damage, false) # меняем здоровье второго участника
 		if surplus: return # любое ненулевое значение остатка означает смерть участника
 
 		current = current^1 # меняем атакующего
@@ -107,11 +127,11 @@ func duel(defender: GameEntity, attacker: GameEntity = player): # нападаю
 
 func time_effects(): # потребление различных ресурсов игрока в результате проведения события
 	for entity in player.get_entities(true): # для всех сущностей игрока, влючая его самого
-		if entity.get_attribute(E.TYPE) == E.TYPES.BIOLOGICAL:
-			entity.change_attribute(E.HEALTH) # снижение "сытости" для биологических сущностей
+		if entity.get_attribute(TYPE) == TYPES.BIOLOGICAL:
+			entity.change_attribute(HEALTH) # снижение "сытости" для биологических сущностей
 		
-		if entity.get_attribute(E.ACTIVE):
-			entity.change_attribute(E.CAPACITY) # потребление расходников активных сущностей
+		if entity.get_attribute(ACTIVE):
+			entity.change_attribute(CAPACITY) # потребление расходников активных сущностей
 
 func clamp_int(value: int, min_value: int, max_value: int) -> int: # вариант clamp() для целых чисел
 	if value > max_value: return max_value
@@ -132,4 +152,4 @@ func randw(data: Array): # генератор взвешенных случай�
 			return element.keys()[0] # возвращаем первый элемент с вероятностью выше отсечки
 
 func _sort_entities(a: GameEntity, b: GameEntity) -> bool: # кастомная сортировка для массива сущностей
-	return a.get_attribute(E.NAME) < b.get_attribute(E.NAME)
+	return a.get_attribute(NAME) < b.get_attribute(NAME)

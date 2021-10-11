@@ -16,7 +16,7 @@ signal results_confirmed # сообщает что пользователь за
 signal trade_complete # сообщает о закрытии окна торговли
 
 func _ready() -> void:
-	_root.get_node("TestButton").connect("pressed", Game, "test_start") # только для тестирования
+	_root.get_node("NewGame").connect("pressed", Game, "new_game") # только для тестирования
 	
 	Logger.connect("new_log_record", self, "_on_new_log_record")
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")

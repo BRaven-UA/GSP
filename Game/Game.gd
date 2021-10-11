@@ -20,7 +20,7 @@ func _ready():
 	GUI.connect("results_confirmed", self, "_on_GUI_results")
 	GUI.connect("trade_complete", self, "_on_GUI_trade")
 
-func test_start(): # настройка игры для нужд тестирования
+func new_game():
 	var player = E.create_entity("Игрок")
 	player.add_entity(E.create_entity("Нож"))
 	player.add_entity(E.create_entity("Хлеб"))
@@ -31,15 +31,10 @@ func test_start(): # настройка игры для нужд тестиро�
 	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
 	update_events()
 
-#func game_loop(): # основной игровой цикл
-#	while not _game_over:
-#		update_events()
-#		yield(GUI, "results_confirmed")
-#		E.time_effects()
-
 func _next_step(): # следующий игровой цикл
-	E.time_effects()
-	update_events()
+	if not _game_over:
+		E.time_effects()
+		update_events()
 
 func update_events(): # формирует новый список событий для выбора
 	_available_events.clear()
@@ -69,7 +64,7 @@ func update_events(): # формирует новый список событи�
 	emit_signal("new_events", _available_events) # на сигнал должен реагировать интерфейс EventList
 
 func game_over() -> void:
-	push_warning("Game over")
+	print("!!  Game over   !!")
 	_game_over = true
 
 func _on_GUI_results():

@@ -77,13 +77,13 @@ align = 1
 valign = 1
 max_lines_visible = 1
 
-[node name="TestButton" type="Button" parent="."]
+[node name="NewGame" type="Button" parent="."]
 anchor_left = 0.439453
 anchor_top = 0.863333
 anchor_right = 0.544922
 anchor_bottom = 0.913333
 focus_mode = 0
-text = "Начать тест"
+text = "Начать заново"
 __meta__ = {
 "_edit_use_anchors_": true
 }

@@ -10,21 +10,8 @@ func _init() -> void:
 
 func _define_actions():
 	if randf() < 0.5: # создаем жильца и даем ему оружие
+		occupant = E.create_person([{"Ничего":1}, {"Нож":0.6}, {"Топор":0.3}, {"Охотничья винтовка":0.4}]) # возможное оружие жильца и шансы его выпадения (65%? 20%, 6%, 10%)
 		aggressive = randf() < 0.5
-		
-		var health = round(1.0 + randf() * 99.0) # здоровье от 1 до 100
-		occupant = E.create_entity("Человек", {E.HEALTH:Vector2(health, 100)})
-		
-		var weapon = E.randw([{"Ничего":1}, {"Нож":0.6}, {"Топор":0.3}, {"Охотничья винтовка":0.4}]) # возможное оружие жильца и шансы его выпадения (65%? 20%, 6%, 10%)
-		
-		if weapon != "Ничего": # чаще всего жилец будет безоружен
-			var custom_attribute: Dictionary
-			
-			if weapon == "Охотничья винтовка":
-				custom_attribute = {E.CAPACITY:Vector2(2, 2)} # винтовка будет заряжена
-				occupant.add_entity(E.create_entity("Патрон 7.62 мм", {E.QUANTITY:10})) # дополнительные патроны
-			
-			occupant.add_entity(E.create_entity(weapon, custom_attribute), true)
 	
 	_add_action("Пройти мимо", "_pass_by")
 	

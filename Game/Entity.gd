@@ -188,13 +188,15 @@ func deactivate_entity(entity: GameEntity):
 	_active_entities.erase(entity)
 	entity.set_attribute(E.ACTIVE, false)
 
-func get_entities(include_self := false) -> Array:
+func get_entities(include_self := false, active := false) -> Array:
+	var entities = _active_entities if active else _entities
+	
 	if include_self:
 		var result = [self]
-		result.append_array(_entities)
+		result.append_array(entities)
 		return result
 	else:
-		return _entities
+		return entities
 
 func get_text() -> String: # возвращает сокращенное текстовое представление сущности
 	var text: String = get_attribute(E.NAME)
