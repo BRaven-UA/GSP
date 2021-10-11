@@ -65,6 +65,7 @@ enabled=PoolStringArray( "res://addons/script-state-keeper/plugin.cfg" )
 
 theme/custom="res://Game/GUI/Theme/GUI_Theme.tres"
 theme/custom_font="res://Game/GUI/Theme/Regular_Font.tres"
+timers/tooltip_delay_sec=2.0
 
 [rendering]
 

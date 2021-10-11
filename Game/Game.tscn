@@ -168,6 +168,7 @@ margin_right = 300.0
 margin_bottom = 152.0
 focus_mode = 0
 size_flags_vertical = 3
+custom_constants/vseparation = 4
 select_mode = 1
 allow_rmb_select = true
 __meta__ = {

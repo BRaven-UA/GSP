@@ -16,7 +16,7 @@ var _merchant_total_cost: int
 func _ready() -> void:
 	_merchant_item_list.connect("multi_selected", self, "_on_item_list_multiselected", [_merchant_item_list])
 	_merchant_item_list.connect("item_rmb_selected", self, "_on_item_list_rmb_selected")
-	_merchant_item_list.connect("nothing_selected", self, "_on_item_list_nothing_selected")
+	_merchant_item_list.connect("nothing_selected", self, "_on_item_list_nothing_selected", [_merchant_item_list])
 	_menu.connect("id_pressed", self, "_on_menu_item_pressed")
 	_confirm.connect("pressed", self, "_on_confirm_pressed")
 	_cancel.connect("pressed", self, "_on_cancel_pressed")
@@ -47,7 +47,7 @@ func show_panel(merchant: GameEntity):
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
 	visible = true
 
-func _update_list(merchant: GameEntity):
+func _update_list(merchant: GameEntity): # заполняет заново список предметов торговца
 	_merchant_item_list.clear()
 	
 	for entity in merchant.get_entities():
@@ -59,18 +59,9 @@ func _update_list(merchant: GameEntity):
 	
 	_merchant_item_list.sort_items_by_text()
 	
-	_update_offers()
+	_update_offers(_merchant_item_list)
 
-func _update_offers():
-	_label.text = "%d\n%d" % [_player_total_cost, _merchant_total_cost]
-	_confirm.disabled = _player_total_cost < _merchant_total_cost or _player_total_cost < 1
-
-func _on_player_entities_changed(entities: Array):
-	_player_selection.clear()
-	_player_total_cost = 0
-	_update_offers()
-
-func _on_item_list_multiselected(index: int, selected: bool, item_list: ItemList): # по сингналу от списков
+func _update_offers(item_list: ItemList): # обновляет данные о предложениях сторон
 	var entities = _player_selection if item_list == player_item_list else _merchant_selection
 	entities.clear()
 	
@@ -85,7 +76,16 @@ func _on_item_list_multiselected(index: int, selected: bool, item_list: ItemList
 	else:
 		_merchant_total_cost = total_cost
 	
-	_update_offers()
+	_label.text = "%d\n%d" % [_player_total_cost, _merchant_total_cost]
+	_confirm.disabled = _player_total_cost < _merchant_total_cost or _player_total_cost < 1
+
+func _on_player_entities_changed(entities: Array):
+	_player_selection.clear()
+	_player_total_cost = 0
+	_update_offers(player_item_list)
+
+func _on_item_list_multiselected(index: int, selected: bool, item_list: ItemList): # по сингналу от списков
+	_update_offers(item_list)
 
 func _on_item_list_rmb_selected(index: int, position: Vector2): # меню разделения предметов
 	var entity: GameEntity = _merchant_item_list.get_item_metadata(index)

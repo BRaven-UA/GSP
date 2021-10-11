@@ -36,19 +36,19 @@ func _on_item_rmb_selected(index: int, position: Vector2) -> void: # форми�
 	
 	var entity: GameEntity = get_item_metadata(index)
 	var quantity = entity.get_attribute(E.QUANTITY)
+	var capacity = entity.get_attribute(E.CAPACITY, true, Vector2.ZERO)
 	
 	var activable = entity.get_attribute(E.ACTIVE)
 	if activable != null:
-		var has_consumables = entity.get_attribute(E.CAPACITY, true, Vector2.ZERO).x
 		var turn_on_text = "Активировать"
-		if not has_consumables:
+		if not capacity.x:
 			turn_on_text += " (нужна зарядка)"
 		
 		var menu_index = _menu.get_item_count() # индекс для нового пункта
 		_menu.add_item("Деактивировать" if activable else turn_on_text, MENU_ITEMS.SWITCH)
-		_menu.set_item_disabled(menu_index, not bool(has_consumables))
+		_menu.set_item_disabled(menu_index, not bool(capacity.x))
 	
-	if quantity or entity.get_attribute(E.CAPACITY):
+	if quantity or capacity:
 		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
 		if change_health > 0: # если сущность может восстанавливать здоровье
 			var restore_menu = _init_submenu("RestoreMenu")
@@ -68,6 +68,25 @@ func _on_item_rmb_selected(index: int, position: Vector2) -> void: # форми�
 		
 		if load_menu.get_item_count(): # если есть что пополнять
 			_menu.add_submenu_item("Пополнить запас ", "LoadMenu", -2)
+		
+	if capacity.x: # имеются заряды для разрядки
+		var unload_menu = _init_submenu("UnloadMenu")
+		
+		var consumable_name = entity.get_attribute(E.CONSUMABLES, true, entity.get_attribute(E.NAME)) # если не указан тип расходников, значит это виртуальный расходник, вместо него берем имя самой сущности
+		
+		var consumable_data = E.get_base_entity(consumable_name)
+		if consumable_data.has(E.QUANTITY):
+			consumable_data[E.QUANTITY] = capacity.x
+			var consumable = E.create_entity(consumable_data)
+			_add_submenu_item(unload_menu, consumable)
+		
+		for target in E.player.get_entities():
+			if (target.get_attribute(E.CONSUMABLES) == consumable_name or target.get_attribute(E.NAME) == consumable_name) and target != entity: # если использует данный тип расходником или является им 
+				var target_capacity: Vector2 = target.get_attribute(E.CAPACITY, true, Vector2(0, 1)) # Vector2(0, 1) - это заглушка для сущностей с количеством
+				if target_capacity.x < target_capacity.y: # если возможно пополнение
+					_add_submenu_item(unload_menu, target)
+		
+		_menu.add_submenu_item("Разрядить ", "UnloadMenu", -2)
 	
 	if quantity:
 		var merge_menu = _init_submenu("MergeMenu")
@@ -132,8 +151,6 @@ func _on_menu_item_pressed(index: int) -> void: # обработка нажат�
 			E.player.remove_entity(entity)
 		
 		MENU_ITEMS.SORT:
-#			E.player.get_entities().sort_custom(E, "_sort_entities")
-#			_on_player_entities_changed(E.player.get_entities())
 			sort_items_by_text()
 
 func _on_submenu_item_pressed(index: int, submenu: PopupMenu):
@@ -150,6 +167,18 @@ func _on_submenu_item_pressed(index: int, submenu: PopupMenu):
 			var loading = capacity.x if capacity else entity.get_attribute(E.QUANTITY) # у одноразовых расходников берем количество
 			var surplus = target.change_attribute(E.CAPACITY, loading)
 			entity.set_attribute(E.CAPACITY if capacity else E.QUANTITY, surplus)
+		
+		"UnloadMenu":
+			var surplus := 0
+			
+			if target.owner:
+				var loading = entity.get_attribute(E.CAPACITY).x
+				var attribute = E.CAPACITY if target.get_attribute(E.CAPACITY) else E.QUANTITY
+				surplus = target.change_attribute(attribute, loading)
+			else: # добавляем созданный расходник без объединения с существующими
+				E.player.add_entity(target, false, false)
+			
+			entity.set_attribute(E.CAPACITY, surplus)
 		
 		"MergeMenu":
 			E.player.merge_entity(entity, target)
