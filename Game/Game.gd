@@ -2,12 +2,17 @@
 
 extends Node
 
+enum {PERK_NAME, PERK_DESCRIPTION}
+const PERKS := [{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"}]
+
 var _events := [] # список всех событий в игре
 var _available_events := [] # список событий, доступных для выбора игроком
 var _events_quantity := 3 # количество событий для выбора
+var _active_perks := [] # список активных перков (уникальных способностей игрока)
 var _game_over := false # флаг окончания игры
 
 signal new_events # Новые события доступны для выбора
+signal perks_changed # состав активных перков изменился
 
 
 func _ready():
@@ -29,6 +34,7 @@ func new_game():
 	player.add_entity(E.create_entity("Патрон для дробовика", {E.QUANTITY:3}))
 	player.add_entity(E.create_entity("Радиоприемник"))
 	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
+	add_perk("Зоркость")
 	update_events()
 
 func _next_step(): # следующий игровой цикл
@@ -66,6 +72,26 @@ func update_events(): # формирует новый список событи�
 func game_over() -> void:
 	print("!!  Game over   !!")
 	_game_over = true
+
+func add_perk(name: String):
+	for perk in PERKS:
+		if perk[PERK_NAME] == name:
+			_active_perks.append(perk)
+			emit_signal("perks_changed", _active_perks)
+			return
+
+func remove_perk(name: String):
+	for perk in _active_perks:
+		if perk[PERK_NAME] == name:
+			_active_perks.erase(perk)
+			emit_signal("perks_changed", _active_perks)
+			return
+
+func has_perk(name: String) -> bool:
+	for perk in _active_perks:
+		if perk[PERK_NAME] == name:
+			return true
+	return false
 
 func _on_GUI_results():
 	_next_step()

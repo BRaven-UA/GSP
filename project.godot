@@ -49,6 +49,8 @@ gdscript/warnings/return_value_discarded=false
 
 [display]
 
+window/size/width=1160
+window/size/height=700
 window/size/always_on_top=true
 window/vsync/use_vsync=false
 window/energy_saving/keep_screen_on=false

@@ -27,6 +27,9 @@ func is_available() -> bool:
 	
 	return primary
 
+func setup():
+	bonus_info = "Понадобится топор, бензопила или динамит"
+
 func _define_actions():
 	_add_action("Сдвинуть дерево голыми руками", "_fail")
 	

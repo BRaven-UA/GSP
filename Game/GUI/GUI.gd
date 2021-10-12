@@ -9,6 +9,7 @@ onready var _accept_dialog: AcceptDialog = _root.get_node("AcceptDialog")
 onready var _trade_panel: Panel = _root.get_node("TradePanel")
 onready var _log_frame: RichTextLabel = _root.get_node("Log")
 onready var _entity_list: ItemList = _root.get_node("EntityList")
+onready var _perk_list: ItemList = _root.get_node("PerkList")
 onready var _health_bar: ProgressBar = _root.get_node("HealthBar")
 onready var _health_bar_label: Label = _health_bar.get_node("Label")
 
@@ -20,6 +21,7 @@ func _ready() -> void:
 	
 	Logger.connect("new_log_record", self, "_on_new_log_record")
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
+	Game.connect("perks_changed", self, "_on_perks_changed")
 	_trade_panel.player_item_list = _entity_list
 	_accept_dialog.connect("confirmed", self, "_on_accept_dialog_confirmed")
 	
@@ -28,6 +30,18 @@ func _ready() -> void:
 	
 	var label = _accept_dialog.get_label()
 	label.valign = Label.VALIGN_CENTER
+
+func _on_perks_changed(active_perks: Array):
+	_perk_list.clear()
+	
+	var index := 0
+	for perk in active_perks:
+		_perk_list.add_item(perk[Game.PERK_NAME])
+		_perk_list.set_item_tooltip(index, perk[Game.PERK_DESCRIPTION])
+		_perk_list.set_item_selectable(index, false)
+		index += 1
+	
+	_perk_list.visible = _perk_list.get_item_count() as bool
 
 func show_accept_dialog(text: String): # отображение информационного окна с одной кнопкой "ОК"
 	if text:

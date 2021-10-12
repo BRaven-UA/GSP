@@ -44,7 +44,7 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
-	selected_frame.show_actions() # добавляем список действий
+	selected_frame.show_actions(true) # добавляем список действий с первичной настройкой события
 	E.connect("player_entities_changed", self, "_on_player_entities_changed", [selected_frame])
 	visible = true
 

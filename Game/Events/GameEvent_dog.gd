@@ -7,11 +7,12 @@ func _init() -> void:
 	description = "Бездомная собака. Не проявляет агрессии и выглядит голодной"
 	probability = 0.33
 
-func _define_actions():
+func setup():
 	dog = E.create_entity("Собака", {E.HEALTH:Vector2(20, 30)}) # голодная собака
-	
+	_target_bonus_info(dog)
+
+func _define_actions():
 	_add_action("Пройти мимо", "_pass_by")
-	
 	_add_hostile_actions(dog)
 	
 	for entity in E.player.get_entities():

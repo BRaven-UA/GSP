@@ -6,9 +6,11 @@ func _init() -> void:
 	name = "Грабитель"
 	description = "Этот тип собирается забрать ваше имущество, не считаясь с вашим мнением"
 
-func _define_actions():
+func setup():
 	mugger = E.create_person()
-	
+	_target_bonus_info(mugger)
+
+func _define_actions():
 	_add_hostile_actions(mugger)
 	_add_action("Не сопротивляться", "_dont_resist")
 	_add_action("Попытаться убежать", "_escape")
@@ -38,9 +40,13 @@ func _dont_resist(): # позволить себя ограбить
 	return "Вы покорно отдали все свои вещи, а заодно выслушали\nмножество оскорблений в свой адрес." + _loss_items()
 
 func _loss_items() -> String:
+	var items := []
 	for entity in E.player.get_entities():
 		if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM: # забирает только предметы
-			E.player.remove_entity(entity)
+			items.append(entity)
+	
+	E.player.remove_entities(items) # для "тихого" удаления
+	
 	return "\nДальнейшее путешествие вы продолжаете налегке."
 
 func _escape() -> String:

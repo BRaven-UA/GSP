@@ -5,8 +5,8 @@
 [ext_resource path="res://Game/GUI/EventFrame.gd" type="Script" id=4]
 
 [node name="Event" type="MarginContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 200.0
+margin_bottom = 100.0
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -71,10 +71,19 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="Dummy" type="Control" parent="MarginContainer/Container"]
+[node name="BonusInfo" type="Label" parent="MarginContainer/Container"]
 margin_top = 47.0
 margin_right = 180.0
-margin_bottom = 80.0
+margin_bottom = 67.0
+rect_min_size = Vector2( 0, 20 )
+custom_colors/font_color = Color( 0.701961, 0.203922, 0.203922, 1 )
+align = 1
+valign = 2
+autowrap = true
+
+[node name="Dummy" type="Control" parent="MarginContainer/Container"]
+margin_top = 67.0
+margin_right = 180.0
+margin_bottom = 77.0
 rect_min_size = Vector2( 0, 10 )
 mouse_filter = 2
-size_flags_vertical = 3

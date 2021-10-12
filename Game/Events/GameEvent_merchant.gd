@@ -1,16 +1,21 @@
 extends GameEvent
 
-#var merchant: GameEntity
+var merchant: GameEntity
+var names := ["Обмен без обмана", "Лавка на колесах", "Наномаркет"] # количество торговцев
+var name_index: int
 
 func _init() -> void:
 	name = "Странствующий торговец"
-	description = "Бронированный фургон с надписью 'Обмен без обмана'. За рулем вооруженный охранник, а сбоку от него в кузове проделана прорезь для обмена товарами"
+	_set_merchant()
 
-func _define_actions():
-	_add_action("Торговать", "_trade")
+func _set_merchant():
+	probability = names.size() / 3.0 # шанс появления зависит от количества живых торговцев
+	if probability:
+		name_index = randi() % names.size()
+		description = "Бронированный фургон с надписью '%s'. За рулем вооруженный охранник, а сбоку от него в кузове проделана прорезь для обмена товарами" % names[name_index]
 
-func _trade() -> String:
-	var merchant = E.create_entity("Человек")
+func setup():
+	merchant = E.create_entity("Человек")
 	
 	var possible_goods := [{"Хлеб":1}, {"Мясо":1}, {"Тушенка":1}, {"Нож":1}, {"Топор":0.75}, {"Бензопила":0.25}, {"Канистра с бензином":1}, {"Дробовик":0.2}, {"Патрон для дробовика":1}, {"Пистолет":0.75}, {"Патрон 9 мм":1}, {"Охотничья винтовка":0.5}, {"Патрон 7.62 мм":1}, {"Автоматическая винтовка":0.15}, {"Патрон 5.56 мм (х3)":1}, {"Радиоприемник":0.5}, {"Аккумулятор":1}, {"Динамит":0.1}] # расходники так же могут появиться в списке товаров, несмотря на наличие в нем использующей их сущности
 	
@@ -37,10 +42,30 @@ func _trade() -> String:
 			merchant.add_entity(E.create_entity(consumable_data))
 		
 		merchant.add_entity(E.create_entity(data))
+
+func _define_actions():
+	_add_action("Торговать", "_trade")
 	
+	var explosive = E.player.find_entity(E.NAME, "Динамит")
+	if explosive:
+		_add_action("Подорвать фургон торговца", "_blow_up", [explosive])
+
+func _trade() -> String:
 	GUI.show_trade_panel(merchant)
-	
+	_set_merchant() # меняем следующего торговца
 	return ""
 
-
-# торговая наценка, сортировка товаров у торговца
+func _blow_up(entity: GameEntity):
+	entity.change_attribute(E.QUANTITY)
+	
+	var weapon = E.create_entity(E.randw([{"Пистолет":1}, {"Дробовик":0.75}, {"Автоматическая винтовка":0.5}])) # оружие охранника
+	weapon.set_attribute(E.CAPACITY, 1000) # максимальный заряд (лишнее отсечется)
+	E.player.add_entity(weapon)
+	
+	for entity in merchant.get_entities():
+		E.player.add_entity(entity)
+	
+	names.remove(name_index) # удаляем из списка торговцев
+	_set_merchant() # меняем следующего торговца
+	
+	return "Подкравшись к фургону так, чтобы вас не заметил охранник, вы подложили под днище динамит и бросились в укрытие. Охранник вас заметил, но ничего не успел сделать - фургон взлетел на воздух и приземлился на бок. Вы без проблем расправились с контуженным охранником, после чего проникли в кузов через развороченное дно фургона, добили торговца и забрали все ценное."

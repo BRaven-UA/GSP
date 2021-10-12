@@ -6,14 +6,16 @@ func _init() -> void:
 	name = "Пустая дорога"
 	description = "Ничего необычного, пустая дорога и больше ничего"
 
-func _define_actions():
+func setup():
 	ambush = randf() < 0.1
-	
+	bonus_info = "Впереди засада!" if ambush else "Все чисто"
+
+func _define_actions():
 	_add_action("Пройти по дороге", "_go_along")
 	
-	for entity in E.player.get_entities():
-		if entity.get_attribute(E.NAME) == "Собака":
-			_add_action("Послать вперед собаку", "_send_scout", [entity])
+	var dog = E.player.find_entity(E.NAME, "Собака")
+	if dog:
+		_add_action("Послать вперед собаку", "_send_scout", [dog])
 
 func _go_along() -> String:
 	var result_text := "Пройдя по дороге вы не встретили ничего необычного"

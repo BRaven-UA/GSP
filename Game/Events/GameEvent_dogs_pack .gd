@@ -7,12 +7,15 @@ func _init() -> void:
 	description = "Агрессивная свора собак во главе с матерым вожаком"
 	probability = 0.5
 
-func _define_actions():
+func setup():
 	var pack_leader_data = E.get_base_entity("Собака")
 	pack_leader_data[E.HEALTH] *= Vector2(1.5, 1.5) # здоровее на 50%
 	pack_leader = E.create_entity(pack_leader_data)
 	pack_leader.change_attribute(E.CHANGE_HEALTH, -5, false) # сильнее на 50%
 	
+	_target_bonus_info(pack_leader)
+
+func _define_actions():
 	_add_hostile_actions(pack_leader, "Атаковать вожака")
 	
 	for entity in E.player.get_entities():

@@ -10,9 +10,11 @@ func _init() -> void:
 func is_available() -> bool:
 	return E.player.find_entity(E.NAME, "", true) != null
 
-func _define_actions():
+func setup():
 	entity = E.create_entity("Человек")
-	
+	_target_bonus_info(entity)
+
+func _define_actions():
 	_add_hostile_actions(entity)
 
 func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:

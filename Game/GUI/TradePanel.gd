@@ -11,6 +11,7 @@ var _player_selection: Array # эти два массива получают п�
 var _merchant_selection: Array
 var _player_total_cost: int # кэшируем обе суммы чтобы лишний раз не пересчитывать
 var _merchant_total_cost: int
+var _merchant_markup := 1.1 # наценка торговца
 
 
 func _ready() -> void:
@@ -74,7 +75,7 @@ func _update_offers(item_list: ItemList): # обновляет данные о �
 	if item_list == player_item_list:
 		_player_total_cost = total_cost
 	else:
-		_merchant_total_cost = total_cost
+		_merchant_total_cost = int(total_cost * _merchant_markup)
 	
 	_label.text = "%d\n%d" % [_player_total_cost, _merchant_total_cost]
 	_confirm.disabled = _player_total_cost < _merchant_total_cost or _player_total_cost < 1
@@ -138,12 +139,8 @@ func _on_item_list_nothing_selected(item_list: ItemList):
 	_on_item_list_multiselected(0, false, item_list)
 
 func _on_confirm_pressed():
-	for entity in _player_selection:
-		E.player.remove_entity(entity)
-	
-	for entity in _merchant_selection:
-		E.player.add_entity(entity)
-
+	E.player.remove_entities(_player_selection)
+	E.player.add_entities(_merchant_selection)
 	_clear()
 
 func _on_cancel_pressed():

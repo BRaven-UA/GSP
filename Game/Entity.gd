@@ -129,7 +129,7 @@ func change_attribute(name: int, value = -1, directly := true) -> int:
 	var surplus = set_attribute(name, current_value + value, directly)
 	return surplus
 
-func add_entity(entity: GameEntity, activate := false, merge := true): # добавляет сущность к собственным, опционально активирует ее, опционально объединяет с подобными
+func add_entity(entity: GameEntity, activate := false, merge := true, silent := false): # добавляет сущность к собственным, опционально активирует ее, опционально объединяет с подобными
 	if self == E.player:
 		Logger.info("Добавлено: " + entity.get_text())
 	Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
@@ -144,11 +144,13 @@ func add_entity(entity: GameEntity, activate := false, merge := true): # доб�
 	if activate:
 		activate_entity(entity)
 	
-	emit_signal("entity_changed")
+	if not silent: # "тихое" добавление используется при пакетном добавлении чтобы не "флудить" сигналом
+		emit_signal("entity_changed")
 
-func add_entities(entities: Array, activate := false):
+func add_entities(entities: Array, activate := false, merge := true):
 	for entity in entities:
-		add_entity(entity, activate)
+		add_entity(entity, activate, merge, true) # используем "тихое" добавление
+	emit_signal("entity_changed")
 
 func merge_entity(entity: GameEntity, target: GameEntity = null) -> GameEntity: # Объединяет сущности, возвращает ссылку на итоговую сущность
 	if not target:
@@ -162,7 +164,7 @@ func merge_entity(entity: GameEntity, target: GameEntity = null) -> GameEntity: 
 	
 	return null
 
-func remove_entity(entity: GameEntity):
+func remove_entity(entity: GameEntity, silent := false):
 	_entities.erase(entity)
 	_active_entities.erase(entity)
 	entity.owner = null
@@ -171,6 +173,12 @@ func remove_entity(entity: GameEntity):
 		Logger.info("Удалено: " + entity.get_text())
 	Logger.debug("{%s} удалено из {%s}" % [entity.get_text(), get_text()])
 	
+	if not silent: # "тихое" удаление используется при пакетном удалении чтобы не "флудить" сигналом
+		emit_signal("entity_changed")
+
+func remove_entities(entities: Array):
+	for entity in entities:
+		remove_entity(entity, true) # используем "тихое" удаление
 	emit_signal("entity_changed")
 
 func activate_entity(entity: GameEntity): # делает указаную сущность активной (влияющей на данную сущность)
