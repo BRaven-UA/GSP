@@ -26,8 +26,8 @@ func _clear(exception: MarginContainer = null) -> void: # очищает все 
 		if frame != exception:
 			frame.clear()
 	
-	set_anchors_and_margins_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE) # восстанавливаем исходный размер и позицию
-	set_anchor(MARGIN_TOP, 0.2, true) # немного отодвигаем до верхнего края
+#	set_anchors_and_margins_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE) # восстанавливаем исходный размер и позицию
+#	set_anchor(MARGIN_TOP, 0.2, true) # немного отодвигаем до верхнего края
 
 func _get_frame() -> Button: # ищет в пуле незанятую рамку или создает новую
 	for frame in _frames:

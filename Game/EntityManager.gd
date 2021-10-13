@@ -106,7 +106,7 @@ func _on_entity_changed(entity: GameEntity):
 
 func _on_entity_delete(entity: GameEntity):
 	if entity == player:
-		Game.game_over()
+		Game.fail()
 	if entity.owner:
 		entity.owner.remove_entity(entity)
 

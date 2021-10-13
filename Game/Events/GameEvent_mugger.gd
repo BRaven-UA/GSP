@@ -7,7 +7,7 @@ func _init() -> void:
 	description = "Этот тип собирается забрать ваше имущество, не считаясь с вашим мнением"
 
 func setup():
-	mugger = E.create_person()
+	mugger = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
 	_target_bonus_info(mugger)
 
 func _define_actions():

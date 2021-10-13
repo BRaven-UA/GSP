@@ -6,13 +6,13 @@ enum {PERK_NAME, PERK_DESCRIPTION}
 const PERKS := [{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"}]
 
 var _events := [] # список всех событий в игре
-var _available_events := [] # список событий, доступных для выбора игроком
-var _events_quantity := 3 # количество событий для выбора
-var _active_perks := [] # список активных перков (уникальных способностей игрока)
-var _game_over := false # флаг окончания игры
+var _experience : int # накопленный игровой опыт (не зависит от сущности игрока)
+var _active_perks := [] # список активных перков (уникальных способностей) текущей сущности игрока
+var _fail := false # флаг завершения текущей попытки
 
 signal new_events # Новые события доступны для выбора
 signal perks_changed # состав активных перков изменился
+signal exp_changed # изменился игровой опыт
 
 
 func _ready():
@@ -25,7 +25,7 @@ func _ready():
 	GUI.connect("results_confirmed", self, "_on_GUI_results")
 	GUI.connect("trade_complete", self, "_on_GUI_trade")
 
-func new_game():
+func new_attempt():
 	var player = E.create_entity("Игрок")
 	player.add_entity(E.create_entity("Нож"))
 	player.add_entity(E.create_entity("Хлеб"))
@@ -34,16 +34,28 @@ func new_game():
 	player.add_entity(E.create_entity("Патрон для дробовика", {E.QUANTITY:3}))
 	player.add_entity(E.create_entity("Радиоприемник"))
 	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
+	emit_signal("exp_changed", _experience) # для первичного заполнения индикатора опыта
+	_active_perks = []
 	add_perk("Зоркость")
 	update_events()
 
+func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
+	if not _fail: # события, приведшие к смерти, не увеличивают опыт
+		Logger.info("Получено %d опыта" % value)
+		var prev_exp = _experience
+		_experience += value
+# warning-ignore:integer_division
+		if prev_exp / 100 != _experience / 100:
+			print("новый уровень")
+		emit_signal("exp_changed", _experience)
+
 func _next_step(): # следующий игровой цикл
-	if not _game_over:
+	if not _fail:
 		E.time_effects()
 		update_events()
 
 func update_events(): # формирует новый список событий для выбора
-	_available_events.clear()
+	var _available_events := [] # список событий, доступных для выбора игроком
 	var events_pool := [] # временный список доступных для выбора событий
 	
 	for event in _events: # формируем предварительный список событий, соответствующих требованиям
@@ -59,7 +71,7 @@ func update_events(): # формирует новый список событи�
 	
 	events_pool.shuffle() # меняем порядок на случайный
 	
-	for i in _events_quantity: # выбираем N случайных события из списка доступных
+	for i in 3: # выбираем N случайных события из списка доступных
 		var cut_off = randf() # определяем "редкость" события
 		for event in events_pool:
 			if cut_off <= event.probability:
@@ -69,9 +81,9 @@ func update_events(): # формирует новый список событи�
 	
 	emit_signal("new_events", _available_events) # на сигнал должен реагировать интерфейс EventList
 
-func game_over() -> void:
-	print("!!  Game over   !!")
-	_game_over = true
+func fail() -> void:
+	print("!!  Ваш текущий игровой персонаж умер. Начните снова  !!")
+	_fail = true
 
 func add_perk(name: String):
 	for perk in PERKS:

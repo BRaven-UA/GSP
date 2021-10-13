@@ -10,6 +10,7 @@ var description: String # описание события до того как �
 var bonus_info: String # дополнительная информация, доступная только с перком "Зоркость"
 var probability := 1.0 # вероятность появления события в списке доступных (0-1)
 var actions: Array # список действий для данного события
+var _action_exp := {} # количество опыта по завершению события (для разных действий отельно)
 #var _player: GameEntity = E.player # ссылка на сущность игрока
 #var _player_entities: Array = Global.player.entities # ссылка на все сущности игрока
 
@@ -39,6 +40,11 @@ func apply_action(index: int) -> void: # применить указанное �
 	var result_text = callv(action.Method, action.Arguments)
 	if entity:
 		E.player.deactivate_entity(entity)
+	
+	var exp_gain: int = _action_exp.get(action.Method, 10)
+	Game.increase_exp(exp_gain)
+# warning-ignore:integer_division
+	_action_exp[action.Method] = (exp_gain + 1) / 2 # последующие действия данного события будут приносить все меньше опыта (но не меньше 1)
 	
 	GUI.show_accept_dialog(result_text)
 
