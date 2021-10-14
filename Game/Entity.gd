@@ -88,13 +88,18 @@ func set_attribute(name: int, new_value, directly := true) -> int: # и возв
 				Logger.info(info)
 			
 			E.HEALTH:
-				info += ": потеряно " if new_value.x < current_value.x else ": восстановлено "
+				var log_category = Logger.INGAME_DAMAGE
+				if new_value.x < current_value.x:
+					info += ": потеряно "
+				else:
+					log_category = Logger.INGAME_HEAL
+					info += ": восстановлено "
 				info += str(abs(new_value.x - current_value.x)) + " здоровья"
 				if new_value.x < 1:
 					surplus = -1 # условный признак смерти
 					info += " (смерть)"
 					to_delete = true
-				Logger.info(info)
+				Logger.info(info, log_category)
 			
 			E.QUANTITY:
 				if new_value < 1:
@@ -131,7 +136,7 @@ func change_attribute(name: int, value = -1, directly := true) -> int:
 
 func add_entity(entity: GameEntity, activate := false, merge := true, silent := false): # добавляет сущность к собственным, опционально активирует ее, опционально объединяет с подобными
 	if self == E.player:
-		Logger.info("Добавлено: " + entity.get_text())
+		Logger.info("Добавлено: " + entity.get_text(), Logger.INGAME_TAKE)
 	Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
 	
 	var merged = merge_entity(entity) if merge else null # объединение сущностей (если нужно)
@@ -170,7 +175,7 @@ func remove_entity(entity: GameEntity, silent := false):
 	entity.owner = null
 	
 	if self == E.player:
-		Logger.info("Удалено: " + entity.get_text())
+		Logger.info("Удалено: " + entity.get_text(), Logger.INGAME_LOSS)
 	Logger.debug("{%s} удалено из {%s}" % [entity.get_text(), get_text()])
 	
 	if not silent: # "тихое" удаление используется при пакетном удалении чтобы не "флудить" сигналом

@@ -3,7 +3,8 @@
 extends MarginContainer
 
 onready var _button: Button = find_node("Button") # кнопка отвечает за подсветку и выбор события
-onready var _container: VBoxContainer = find_node("Container") # контейнер для полей события
+onready var _scroll_container: ScrollContainer = find_node("ScrollContainer") # для ограничения слишком длинных списков действий
+onready var _action_container: VBoxContainer = _scroll_container.get_node("ActionContainer") # контейнер для полей события
 onready var _caption: Label = find_node("Caption") # заголовок события
 onready var _separator: TextureRect = find_node("Separator") # визуальный разграничитель
 onready var _description: Label = find_node("Description") # описание события (скрывается при выборе события)
@@ -40,6 +41,10 @@ func show_actions(setup := false) -> void: # формирование списк
 		button.get_node("Button").text = action.Text
 		button.visible = true
 	
+	_action_container.rect_size = Vector2.ZERO
+	_scroll_container.rect_min_size.x = clamp(_action_container.rect_size.x, 200, 400) + 13
+	_scroll_container.rect_min_size.y = clamp(_action_container.rect_size.y, 50, 230) + 13
+	_scroll_container.visible = true
 	visible = true
 
 func clear() -> void: # очистка окна
@@ -52,6 +57,8 @@ func clear() -> void: # очистка окна
 	_bonus_info.text = ""
 	_description.visible = true
 	_separator.visible = true
+	_scroll_container.visible = false
+#	_scroll_container.rect_min_size = Vector2(200, 50) # для формы выбора событий
 	
 	for button in _action_buttons:
 		button.visible = false
@@ -64,7 +71,7 @@ func _get_button() -> Button: # ищет в пуле незанятую кноп
 	var button = Resources.get_resource("Action").instance() as MarginContainer
 	button.name += str(_action_buttons.size()) # прибавляем к имени индекс в массиве
 	button.get_node("Button").connect("pressed", self, "_on_action_button_pressed", [button]) # передает ссылку на себя в качестве аргумента
-	_container.add_child(button)
+	_action_container.add_child(button)
 	_action_buttons.append(button)
 	return button
 

@@ -1,4 +1,6 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Game/GUI/Theme/Small_Font.tres" type="DynamicFont" id=1]
 
 [node name="Action" type="MarginContainer"]
 margin_right = 20.0
@@ -13,9 +15,11 @@ __meta__ = {
 
 [node name="Button" type="Button" parent="."]
 margin_left = 5.0
-margin_right = 25.0
-margin_bottom = 20.0
+margin_right = 157.0
+margin_bottom = 28.0
 focus_mode = 0
+mouse_filter = 1
+custom_fonts/font = ExtResource( 1 )
 shortcut_in_tooltip = false
 text = "Послать вперед собаку"
 __meta__ = {

@@ -2,7 +2,7 @@
 
 extends MarginContainer
 
-onready var _event_container: HBoxContainer = find_node("EventContainer") # в этот контейнер добавляются все доступные события
+onready var _event_container: GridContainer = find_node("EventContainer") # в этот контейнер добавляются все доступные события
 onready var _frames := [] # пул рамок для отображения событий. Для экономии ресурсов отработанные рамки не удаляются, а помещаются сюда для повторного использования
 
 

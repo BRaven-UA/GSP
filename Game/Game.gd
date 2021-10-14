@@ -41,7 +41,7 @@ func new_attempt():
 
 func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
 	if not _fail: # события, приведшие к смерти, не увеличивают опыт
-		Logger.info("Получено %d опыта" % value)
+		Logger.info("Получено %d опыта" % value, Logger.INGAME_EXP)
 		var prev_exp = _experience
 		_experience += value
 # warning-ignore:integer_division

@@ -33,6 +33,7 @@ PopupMenu/styles/panel = ExtResource( 2 )
 ProgressBar/styles/bg = ExtResource( 7 )
 ProgressBar/styles/fg = ExtResource( 6 )
 RichTextLabel/styles/normal = ExtResource( 2 )
+ScrollContainer/styles/bg = ExtResource( 5 )
 WindowDialog/constants/title_height = 0
 WindowDialog/icons/close = SubResource( 2 )
 WindowDialog/styles/panel = ExtResource( 2 )

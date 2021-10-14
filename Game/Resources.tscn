@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Game/GUI/Action.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Game/GUI/Event_Frame.tscn" type="PackedScene" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://Game/Events/GameEvent_merchant.gd" type="Script" id=10]
 [ext_resource path="res://Game/Events/GameEvent_mugger.gd" type="Script" id=11]
 [ext_resource path="res://Game/Events/GameEvent_dogs_pack .gd" type="Script" id=12]
+[ext_resource path="res://Game/GUI/INFO.png" type="Texture" id=13]
 
 [node name="Resources" type="ResourcePreloader"]
-resources = [ PoolStringArray( "Action", "Event_Frame", "GameEvent_abandoned_house", "GameEvent_dog", "GameEvent_dogs_pack ", "GameEvent_merchant", "GameEvent_mugger", "GameEvent_road", "GameEvent_underground_bunker", "GameEvent_unknown_signal", "OFF", "ON" ), [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 7 ), ExtResource( 3 ), ExtResource( 12 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 4 ), ExtResource( 9 ), ExtResource( 8 ), ExtResource( 5 ), ExtResource( 6 ) ] ]
+resources = [ PoolStringArray( "Action", "Event_Frame", "GameEvent_abandoned_house", "GameEvent_dog", "GameEvent_dogs_pack ", "GameEvent_merchant", "GameEvent_mugger", "GameEvent_road", "GameEvent_underground_bunker", "GameEvent_unknown_signal", "INFO", "OFF", "ON" ), [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 7 ), ExtResource( 3 ), ExtResource( 12 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 4 ), ExtResource( 9 ), ExtResource( 8 ), ExtResource( 13 ), ExtResource( 5 ), ExtResource( 6 ) ] ]

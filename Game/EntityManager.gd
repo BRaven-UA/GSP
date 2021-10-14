@@ -33,7 +33,7 @@ const ENTITIES := [
 	{NAME:"Распил бензопилой", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
 	{NAME:"Канистра с бензином", CLASS:CLASSES.ITEM, DESCRIPTION:"Используется только для хранения бензина", CAPACITY:Vector2(0, 10), COST:10},
 	{NAME:"Дробовик", CLASS:CLASSES.ITEM, DESCRIPTION:"Грозное оружие на небольших дистанциях", CAPACITY:Vector2(0, 6), CONSUMABLES:"Патрон для дробовика", COST:250, ATTACHMENT:["Выстрел из дробовика"]},
-	{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-100},
+	{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-80},
 	{NAME:"Патрон для дробовика", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит только к дробовикам", QUANTITY:1, COST:5},
 	{NAME:"Пистолет", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет одиночными выстрелами", CAPACITY:Vector2(0, 9), CONSUMABLES:"Патрон 9 мм", COST:150, ATTACHMENT:["Выстрел из пистолета"]},
 	{NAME:"Выстрел из пистолета", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-30},
