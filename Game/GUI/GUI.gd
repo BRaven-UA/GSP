@@ -2,12 +2,10 @@
 
 extends Node
 
-const LOG_COLORS := {Logger.INGAME:"ffffff", Logger.INGAME_DAMAGE:"ff5959", Logger.INGAME_HEAL:"59ff67", Logger.INGAME_EXP:"ffdd59", Logger.INGAME_TAKE:"59b1ff", Logger.INGAME_LOSS:"808080", Logger.TIP:"ffff00"}
-
 onready var _root: Control = get_node("/root/MainControl")
 onready var _accept_dialog: AcceptDialog = _root.get_node("AcceptDialog")
 onready var _trade_panel: Panel = _root.get_node("TradePanel")
-onready var _log_frame: RichTextLabel = _root.find_node("Log")
+#onready var _log_frame: RichTextLabel = _root.find_node("Log")
 onready var _entity_list: ItemList = _root.find_node("EntityList")
 onready var _perk_list: ItemList = _root.find_node("PerkList")
 onready var _health_bar: ProgressBar = _root.find_node("HealthBar")
@@ -20,7 +18,6 @@ signal trade_complete # сообщает о закрытии окна торго
 func _ready() -> void:
 	_root.find_node("NewGame").connect("pressed", Game, "new_attempt") # только для тестирования
 	
-	Logger.connect("new_log_record", self, "_on_new_log_record")
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
 	Game.connect("perks_changed", self, "_on_perks_changed")
 	Game.connect("exp_changed", self, "_on_exp_changed")
@@ -62,30 +59,16 @@ func show_accept_dialog(text: String): # отображение информац
 		ok_button.release_focus() # не смотрится когда сразу подсвечено
 
 func show_trade_panel(merchant: GameEntity): # отображение окна торговли с игровой сущностью
+	Logger.tip(Logger.TIP_TRADE)
 	_trade_panel.show_panel(merchant)
 
 func _on_accept_dialog_confirmed(): # пользователь закрыл окно с результатами события
 	emit_signal("results_confirmed")
-
-func _on_new_log_record(info: String, category: int = Logger.INGAME): # обновляется по сигналу от синглтона Logger
-	if category == Logger.TIP:
-		_log_frame.push_align(RichTextLabel.ALIGN_CENTER)
-		_log_frame.add_image(Resources.get_resource("INFO"))
-		_log_frame.push_bold()
-		_log_print("  " + info, category)
-		_log_frame.pop()
-		_log_frame.pop()
-	else:
-		_log_print(info, category)
-
-func _log_print(info: String, category: int = Logger.INGAME): # выводит текст в лог
-	_log_frame.push_color(Color(LOG_COLORS[category]))
-	_log_frame.add_text(info)
-	_log_frame.pop()
-	_log_frame.newline()
 
 func _on_player_entities_changed(entities: Array): # для обновления полоски здоровья
 	var player_health = E.player.get_attribute(E.HEALTH)
 	_health_bar.max_value = player_health.y
 	_health_bar.value = player_health.x
 	_health_bar_label.text = "%d/%d" % [player_health.x, player_health.y]
+	if player_health.x < player_health.y * 0.95:
+		Logger.tip(Logger.TIP_RESTORE)

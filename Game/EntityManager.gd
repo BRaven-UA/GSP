@@ -132,6 +132,8 @@ func time_effects(): # потребление различных ресурсо�
 		
 		if entity.get_attribute(ACTIVE):
 			entity.change_attribute(CAPACITY) # потребление расходников активных сущностей
+	
+	Logger.tip(Logger.TIP_TIME)
 
 func clamp_int(value: int, min_value: int, max_value: int) -> int: # вариант clamp() для целых чисел
 	if value > max_value: return max_value

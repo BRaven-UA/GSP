@@ -3,13 +3,16 @@
 extends Node
 
 enum {PERK_NAME, PERK_DESCRIPTION}
-const PERKS := [{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"}]
+const PERKS := [
+	{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"},
+	{PERK_NAME:"Широкий кругозор", PERK_DESCRIPTION:"Увеличивает на 1 количество событий для выбора"}]
 
 var _events := [] # список всех событий в игре
 var _experience : int # накопленный игровой опыт (не зависит от сущности игрока)
 var _active_perks := [] # список активных перков (уникальных способностей) текущей сущности игрока
 var _fail := false # флаг завершения текущей попытки
 
+signal new_attempt # Начало новой попытки
 signal new_events # Новые события доступны для выбора
 signal perks_changed # состав активных перков изменился
 signal exp_changed # изменился игровой опыт
@@ -26,17 +29,23 @@ func _ready():
 	GUI.connect("trade_complete", self, "_on_GUI_trade")
 
 func new_attempt():
-	var player = E.create_entity("Игрок")
-	player.add_entity(E.create_entity("Нож"))
-	player.add_entity(E.create_entity("Хлеб"))
-	player.add_entity(E.create_entity("Собака"))
-	player.add_entity(E.create_entity("Дробовик"))
-	player.add_entity(E.create_entity("Патрон для дробовика", {E.QUANTITY:3}))
-	player.add_entity(E.create_entity("Радиоприемник"))
-	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
-	emit_signal("exp_changed", _experience) # для первичного заполнения индикатора опыта
+	_fail = false
 	_active_perks = []
-	add_perk("Зоркость")
+	emit_signal("new_attempt")
+	Logger.tip(Logger.TIP_START)
+	
+	var player = E.create_entity("Игрок")
+	player.add_entity(E.create_entity("Хлеб"))
+#	player.add_entity(E.create_entity("Нож"))
+#	player.add_entity(E.create_entity("Собака"))
+#	player.add_entity(E.create_entity("Дробовик"))
+#	player.add_entity(E.create_entity("Патрон для дробовика", {E.QUANTITY:3}))
+#	player.add_entity(E.create_entity("Радиоприемник"))
+#	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
+#	add_perk("Широкий кругозор")
+	
+	emit_signal("exp_changed", _experience) # для первичного заполнения индикатора опыта
+	
 	update_events()
 
 func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
@@ -71,7 +80,8 @@ func update_events(): # формирует новый список событи�
 	
 	events_pool.shuffle() # меняем порядок на случайный
 	
-	for i in 3: # выбираем N случайных события из списка доступных
+	var event_quantity := 3 + int(has_perk("Широкий кругозор"))
+	for i in event_quantity:
 		var cut_off = randf() # определяем "редкость" события
 		for event in events_pool:
 			if cut_off <= event.probability:

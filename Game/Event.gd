@@ -65,6 +65,9 @@ func _add_hostile_actions(target: GameEntity, text := "Напасть"): # ст�
 				var action_text = "%s%s (урон %d)" % [text, entity_text, abs(change_health)]
 				var attacker = entity if entity.get_attribute(E.HEALTH) else E.player
 				_add_action(action_text, "_duel", [target, attacker], entity)
+				Logger.tip(Logger.TIP_WEAPON)
+			else:
+				Logger.tip(Logger.TIP_LOAD)
 
 func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String: # нападающий указан последним т.к. опционален
 	var result_text := "\n%s нападает на %s" % [attacker.get_text(), defender.get_text()]

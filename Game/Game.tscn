@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Small_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Game/GUI/EventList.gd" type="Script" id=5]
 [ext_resource path="res://Game/GUI/TradePanel.gd" type="Script" id=6]
 [ext_resource path="res://Game/GUI/Theme/Exp_Stylebox.tres" type="StyleBox" id=7]
+[ext_resource path="res://Game/GUI/Log.gd" type="Script" id=8]
 
 [node name="MainControl" type="Control"]
 anchor_right = 1.0
@@ -25,7 +26,7 @@ __meta__ = {
 
 [node name="EntityList" type="ItemList" parent="HBoxContainer"]
 margin_right = 270.0
-margin_bottom = 700.0
+margin_bottom = 650.0
 rect_min_size = Vector2( 270, 0 )
 focus_mode = 0
 allow_rmb_select = true
@@ -40,8 +41,8 @@ margin_bottom = 10.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 margin_left = 272.0
-margin_right = 878.0
-margin_bottom = 700.0
+margin_right = 798.0
+margin_bottom = 650.0
 mouse_filter = 2
 size_flags_horizontal = 3
 custom_constants/separation = 5
@@ -51,18 +52,18 @@ __meta__ = {
 }
 
 [node name="CenterContainer" type="CenterContainer" parent="HBoxContainer/VBoxContainer"]
-margin_right = 606.0
-margin_bottom = 616.0
+margin_right = 526.0
+margin_bottom = 566.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="EventList" type="MarginContainer" parent="HBoxContainer/VBoxContainer/CenterContainer"]
 visible = false
-margin_left = 297.0
-margin_top = 302.0
-margin_right = 309.0
-margin_bottom = 314.0
+margin_left = 257.0
+margin_top = 277.0
+margin_right = 269.0
+margin_bottom = 289.0
 grow_horizontal = 2
 size_flags_horizontal = 5
 size_flags_vertical = 5
@@ -97,10 +98,10 @@ margin_bottom = 6.0
 columns = 2
 
 [node name="NewGame" type="Button" parent="HBoxContainer/VBoxContainer"]
-margin_left = 240.0
-margin_top = 621.0
-margin_right = 365.0
-margin_bottom = 647.0
+margin_left = 200.0
+margin_top = 571.0
+margin_right = 325.0
+margin_bottom = 597.0
 focus_mode = 0
 size_flags_horizontal = 4
 text = "Начать заново"
@@ -123,10 +124,10 @@ __meta__ = {
 }
 
 [node name="HealthBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer"]
-margin_left = 203.0
-margin_top = 652.0
-margin_right = 403.0
-margin_bottom = 678.0
+margin_left = 163.0
+margin_top = 602.0
+margin_right = 363.0
+margin_bottom = 628.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 200, 26 )
@@ -161,9 +162,9 @@ __meta__ = {
 }
 
 [node name="ExpBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer"]
-margin_top = 683.0
-margin_right = 606.0
-margin_bottom = 695.0
+margin_top = 633.0
+margin_right = 526.0
+margin_bottom = 645.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 1
@@ -176,20 +177,30 @@ __meta__ = {
 }
 
 [node name="Dummy" type="Control" parent="HBoxContainer/VBoxContainer"]
-margin_top = 700.0
-margin_right = 606.0
-margin_bottom = 700.0
+margin_top = 650.0
+margin_right = 526.0
+margin_bottom = 650.0
 mouse_filter = 2
 
 [node name="Log" type="RichTextLabel" parent="HBoxContainer"]
-margin_left = 880.0
-margin_right = 1180.0
-margin_bottom = 700.0
+margin_left = 800.0
+margin_right = 1100.0
+margin_bottom = 650.0
 grow_horizontal = 0
 rect_min_size = Vector2( 300, 50 )
 custom_fonts/normal_font = ExtResource( 1 )
 custom_constants/line_separation = -5
 scroll_following = true
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Menu" type="PopupMenu" parent="HBoxContainer/Log"]
+margin_right = 221.0
+margin_bottom = 57.0
+items = [ "  Отображать: ", null, 0, false, true, 0, 0, null, "", true, "События без категории", null, 1, true, false, 1, 0, null, "", false, "Получение урона", null, 1, true, false, 2, 0, null, "", false, "Восстановление здоровья", null, 1, true, false, 3, 0, null, "", false, "Получение опыта", null, 1, true, false, 4, 0, null, "", false, "Получение предметов", null, 1, true, false, 5, 0, null, "", false, "Удаление предметов", null, 1, true, false, 6, 0, null, "", false, "Подсказки", null, 1, true, false, 7, 0, null, "", false, "", null, 0, false, true, 8, 0, null, "", true, "Очистить ", null, 0, false, false, 50, 0, null, "", false ]
+hide_on_checkable_item_selection = false
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -71,12 +71,6 @@ func set_attribute(name: int, new_value, directly := true) -> int: # и возв
 			new_value.x = correct_value
 		
 		match name:
-#			E.ACTIVE:
-#				if new_value:
-#					owner.activate_entity(self)
-#				else:
-#					owner.deactivate_entity(self)
-			
 			E.CAPACITY:
 				info += ": потрачено " if new_value.x < current_value.x else ": получено "
 				info += str(abs(new_value.x - current_value.x)) + " зарядов"
