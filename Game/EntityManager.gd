@@ -7,7 +7,6 @@ const ATTRIBUTES := ["NAME", "CLASS", "DESCRIPTION", "HEALTH", "TYPE", "GROUP", 
 enum TYPES {BIOLOGICAL, MECHANICAL, DIGITAL, MENTAL} # перечень типов для атрибута TYPE
 enum GROUPS {FOOD} # перечень групп, для объединения разных типов сущностей
 enum CLASSES {CREATURE, ITEM, ABILITY}
-#enum OPERATIONS {EQUAL, LESS, GREATER} # перечень допустимых операций при поиске аттрибутов
 
 var player: GameEntity # ссылка на сущность игрока
 
@@ -33,7 +32,7 @@ const ENTITIES := [
 	{NAME:"Распил бензопилой", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
 	{NAME:"Канистра с бензином", CLASS:CLASSES.ITEM, DESCRIPTION:"Используется только для хранения бензина", CAPACITY:Vector2(0, 10), COST:10},
 	{NAME:"Дробовик", CLASS:CLASSES.ITEM, DESCRIPTION:"Грозное оружие на небольших дистанциях", CAPACITY:Vector2(0, 6), CONSUMABLES:"Патрон для дробовика", COST:250, ATTACHMENT:["Выстрел из дробовика"]},
-	{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-80},
+	{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
 	{NAME:"Патрон для дробовика", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит только к дробовикам", QUANTITY:1, COST:5},
 	{NAME:"Пистолет", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет одиночными выстрелами", CAPACITY:Vector2(0, 9), CONSUMABLES:"Патрон 9 мм", COST:150, ATTACHMENT:["Выстрел из пистолета"]},
 	{NAME:"Выстрел из пистолета", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-30},
@@ -42,7 +41,7 @@ const ENTITIES := [
 	{NAME:"Выстрел из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-40},
 	{NAME:"Патрон 7.62 мм", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для винтовок", QUANTITY:1, COST:5},
 	{NAME:"Автоматическая винтовка", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет очередью", CAPACITY:Vector2(0, 10), CONSUMABLES:"Патрон 5.56 мм (х3)", COST:320, ATTACHMENT:["Очередь из винтовки"]},
-	{NAME:"Очередь из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-120},
+	{NAME:"Очередь из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-90},
 	{NAME:"Патрон 5.56 мм (х3)", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для автоматических винтовок", QUANTITY:1, COST:15},
 	{NAME:"Радиоприемник", CLASS:CLASSES.ITEM, DESCRIPTION:"В активированном состоянии позволяет слушать радиоэфир", CAPACITY:Vector2(0, 10), CONSUMABLES:"Аккумулятор", COST:60, ACTIVE:false, ATTACHMENT:["Прослушка радиоэфира"]},
 	{NAME:"Прослушка радиоэфира", CLASS:CLASSES.ABILITY},

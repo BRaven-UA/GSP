@@ -30,7 +30,8 @@ func _go_along() -> String:
 					items.append(entity)
 			
 			if items:
-				var lost_item: GameEntity = items[1 + randi() % (items.size() - 1)]
+				items.shuffle()
+				var lost_item: GameEntity = items[0]
 				result_text += "Каким-то чудом вам удалось увернуться от нескольких\nударов и убежать от нападающих. Но, к сожалению, при\nбегстве вы потеряли " + lost_item.get_text()
 				
 				E.player.remove_entity(lost_item)

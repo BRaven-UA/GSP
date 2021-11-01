@@ -2,7 +2,7 @@ extends RichTextLabel
 
 const COLORS := {Logger.INGAME:"ffffff", Logger.INGAME_DAMAGE:"ff5959", Logger.INGAME_HEAL:"59ff67", Logger.INGAME_EXP:"ffdd59", Logger.INGAME_TAKE:"59b1ff", Logger.INGAME_LOSS:"808080", Logger.TIP:"ffff00"}
 
-onready var _menu: PopupMenu = $Menu
+onready var _menu: PopupMenu = $Menu # элементы меню созданы в редакторе, а не кодом
 
 func _ready() -> void:
 	Logger.connect("new_log_record", self, "_on_new_log_record")
@@ -13,7 +13,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_RIGHT and not event.pressed: # по отжатию правой кнопки мыши
 			_menu.rect_position = rect_position + event.position + Vector2(10, 0) # устанавливаем позицию меню чуть правее от места клика
-			_menu.rect_size = Vector2.ZERO # корректируем размер (Годо без багов не бывает)
+#			_menu.rect_size = Vector2.ZERO # корректируем размер (Годо без багов не бывает)
 			_menu.popup()
 
 func _on_new_log_record(record: Dictionary): # обновляется по сигналу от синглтона Logger
@@ -31,9 +31,14 @@ func _on_new_log_record(record: Dictionary): # обновляется по си�
 			pop()
 			pop()
 		else:
-			_log_print("[{Time}] {Text}".format(record), record.Category)
+			_log_print(record.Text, record.Category, record.Time)
 
-func _log_print(text: String, category: int = Logger.INGAME): # выводит текст в лог
+func _log_print(text: String, category: int = Logger.INGAME, time := ""): # выводит текст в лог
+	if time:
+		push_color(Color.webgray)
+		add_text("[%s] " % time)
+		pop()
+	
 	push_color(Color(COLORS[category]))
 	add_text(text)
 	pop()

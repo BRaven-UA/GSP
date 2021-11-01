@@ -27,6 +27,9 @@ func setup():
 		if name in ["Хлеб", "Мясо", "Тушенка"]:
 			data[E.QUANTITY] = 1 + randi() % 3
 		
+		if name in ["Аккумулятор", "Канистра с бензином", "Радиоприемник"]:
+			data[E.CAPACITY].x = data[E.CAPACITY].y
+		
 		if name.begins_with("Патрон"):
 			data[E.QUANTITY] = 5 + randi() % 30
 		

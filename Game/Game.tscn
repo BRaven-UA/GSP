@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Small_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Game/GUI/TradePanel.gd" type="Script" id=6]
 [ext_resource path="res://Game/GUI/Theme/Exp_Stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://Game/GUI/Log.gd" type="Script" id=8]
+[ext_resource path="res://Game/GUI/PerkList.gd" type="Script" id=9]
 
 [node name="MainControl" type="Control"]
 anchor_right = 1.0
@@ -111,14 +112,24 @@ __meta__ = {
 
 [node name="PerkList" type="ItemList" parent="HBoxContainer/VBoxContainer"]
 visible = false
-margin_top = 637.0
-margin_right = 150.0
-margin_bottom = 647.0
-rect_min_size = Vector2( 150, 0 )
+margin_top = 587.0
+margin_right = 200.0
+margin_bottom = 597.0
+rect_min_size = Vector2( 200, 0 )
 focus_mode = 0
 size_flags_horizontal = 0
 custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
+allow_reselect = true
 auto_height = true
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PopupMenu" type="PopupMenu" parent="HBoxContainer/VBoxContainer/PerkList"]
+anchor_left = 1.0
+anchor_right = 1.0
+custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

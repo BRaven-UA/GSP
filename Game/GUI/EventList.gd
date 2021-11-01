@@ -7,14 +7,14 @@ onready var _frames := [] # пул рамок для отображения со
 
 
 func _ready() -> void:
-	Game.connect("new_events", self, "_on_new_events")
+	EventManager.connect("new_events", self, "_on_new_events")
 
 func _on_new_events(events: Array) -> void: # заполняет рамки из пула данными из списка доступных событий. Вызывается по событию new_events от Game
 	_clear()
 	
-	for event in events:
+	for event_data in events:
 		var frame = _get_frame() # получаем ссылку на пустую рамку
-		frame.init(event)
+		frame.init(event_data)
 		frame.visible = true
 	
 	visible = true
@@ -43,6 +43,8 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 	return frame
 
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
+	EventManager.update_trackers(selected_frame.event_data.TrackingData)
+	
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
 	selected_frame.show_actions(true) # добавляем список действий с первичной настройкой события
 	E.connect("player_entities_changed", self, "_on_player_entities_changed", [selected_frame])
@@ -53,6 +55,7 @@ func _on_player_entities_changed(entities: Array, active_frame: MarginContainer)
 	active_frame.show_actions() # добавляем новый список действий
 	visible = true
 
-func _on_action_pressed(): # выбор одного из действий активной рамки события
-	E.disconnect("player_entities_changed", self, "_on_player_entities_changed") 
+func _on_action_pressed(event_data: Dictionary, action_index: int): # выбор одного из действий активной рамки события
+	E.disconnect("player_entities_changed", self, "_on_player_entities_changed")
 	_clear() # скрыть это окно после выбора действия
+	event_data.Event.apply_action(action_index)

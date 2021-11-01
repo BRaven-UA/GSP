@@ -6,6 +6,7 @@ func _init() -> void:
 	name = ""
 	description = ""
 	probability = 1.0
+	distance = 5 + randi() % 76 # от 5% до 80%
 
 func is_available() -> bool:
 	return E.player.find_entity(E.NAME, "", true) != null

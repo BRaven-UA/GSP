@@ -37,6 +37,7 @@ Resources="*res://Game/Resources.tscn"
 Logger="*res://Game/Logger.gd"
 Game="*res://Game/Game.gd"
 GUI="*res://Game/GUI/GUI.gd"
+EventManager="*res://Game/EventManager.gd"
 E="*res://Game/EntityManager.gd"
 
 [debug]
