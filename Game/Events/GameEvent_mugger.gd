@@ -5,6 +5,7 @@ var mugger: GameEntity
 func _init() -> void:
 	name = "Грабитель"
 	description = "Этот тип собирается забрать ваше имущество, не считаясь с вашим мнением"
+	new_character_data = {"Text":"А этот тип оказался не из пугливых, не захотел\nдобровольно расставаться со своим барахлом.\nПришлось с ним повозиться", "Heir":mugger, "Remains":[E.REMAINS.NO_PETS]}
 
 func setup():
 	mugger = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
@@ -31,13 +32,13 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 		
 		result_text += "Это было его последнее ограбление. Вы обыскиваете\nтело и забираете скудные пожитки."
 		
-	elif attacker != E.player: # грабитель победил, но сражался не игрок
+	elif attacker != E.player: # грабитель победил, сражался не игрок
 		result_text += "Когда все закончилось вы были уже далеко."
 	
 	return result_text
 
 func _dont_resist(): # позволить себя ограбить
-	return "Вы покорно отдали все свои вещи, а заодно выслушали\nмножество оскорблений в свой адрес." + _loss_items()
+	return "Вы покорно отдали все свои вещи, а заодно выслушали\nмножество унижений в свой адрес." + _loss_items()
 
 func _loss_items() -> String:
 	var items := []
@@ -59,8 +60,8 @@ func _escape() -> String:
 			var weapon_name = entity.get_attribute(E.NAME)
 			if weapon_name in ["Дробовик", "Пистолет", "Охотничья винтовка", "Автоматическая винтовка"]:
 				var damage = entity.get_attribute(E.CHANGE_HEALTH, false)
-				E.player.change_attribute(E.HEALTH, damage)
 				result_text += "А вот пуле это не составило труда. Выстрел из %s\nнанес вам %d урона.\n" % [weapon_name, damage]
+				E.player.change_attribute(E.HEALTH, damage)
 		
 		if randf() < 0.5: # потеряли предмет
 			var items: = []

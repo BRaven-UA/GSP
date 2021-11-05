@@ -7,12 +7,13 @@ func _init() -> void:
 	description = ""
 	probability = 1.0
 	distance = 5 + randi() % 76 # от 5% до 80%
+	new_character_data = {"Text":"", "Heir":null, "Remains":[E.REMAINS.NO_PETS]}
 
 func is_available() -> bool:
 	return E.player.find_entity(E.NAME, "", true) != null
 
 func setup():
-	entity = E.create_entity("Человек")
+	entity = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
 	_target_bonus_info(entity)
 
 func _define_actions():

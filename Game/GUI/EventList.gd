@@ -43,7 +43,7 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 	return frame
 
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
-	EventManager.update_trackers(selected_frame.event_data.TrackingData)
+	EventManager.set_current_event(selected_frame.event_data)
 	
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
 	selected_frame.show_actions(true) # добавляем список действий с первичной настройкой события

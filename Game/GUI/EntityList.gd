@@ -24,10 +24,15 @@ func _on_player_entities_changed(entities: Array) -> void: # сюда перед
 func _add_item(entity: GameEntity) -> void:
 	var index = get_item_count() # индекс для нового пункта
 	add_item(entity.get_text())
+	
 	var activable = entity.get_attribute(E.ACTIVE) # может ли игрок активировать сущность вручную
 	if activable != null:
 		set_item_icon(index, Resources.get_resource("ON" if activable else "OFF"))
 		Logger.tip(Logger.TIP_ACTIVE)
+	
+	if entity == E.notebook:
+		set_item_disabled(index, true)
+	
 	set_item_tooltip(index, entity.get_full_info())
 	set_item_metadata(index, entity) # сохраняем ссылку на сущность
 

@@ -103,8 +103,9 @@ func set_attribute(name: int, new_value, directly := true) -> int: # и возв
 		Logger.debug("Изменение атрибута %s с %s на %s в { %s }" % [name, current_value, new_value, get_text()])
 		if to_delete:
 			emit_signal("delete_request")
-		else:
-			emit_signal("entity_changed")
+#		else:
+#			emit_signal("entity_changed")
+		emit_signal("entity_changed")
 		
 	else: # передаем управление на другую сущность
 		var _owner = get_attribute_owner(name)

@@ -107,11 +107,11 @@ mouse_filter = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
 visible = false
-margin_top = 77.0
+margin_top = 57.0
 margin_right = 200.0
-margin_bottom = 127.0
+margin_bottom = 107.0
 rect_min_size = Vector2( 200, 50 )
-mouse_filter = 2
+mouse_filter = 1
 
 [node name="ActionContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
 margin_left = 100.0

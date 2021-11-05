@@ -3,9 +3,11 @@
 extends Node
 
 onready var _root: Control = get_node("/root/MainControl")
+onready var _main_container: Control = _root.get_node("MainContainer")
 onready var _accept_dialog: AcceptDialog = _root.get_node("AcceptDialog")
+onready var _accept_timer: Timer = _accept_dialog.get_node("Timer")
 onready var _trade_panel: Panel = _root.get_node("TradePanel")
-#onready var _log_frame: RichTextLabel = _root.find_node("Log")
+onready var _continue: Button = _root.find_node("Continue")
 onready var _entity_list: ItemList = _root.find_node("EntityList")
 #onready var _perk_list: ItemList = _root.find_node("PerkList")
 onready var _health_bar: ProgressBar = _root.find_node("HealthBar")
@@ -16,10 +18,10 @@ signal results_confirmed # сообщает что пользователь за
 signal trade_complete # сообщает о закрытии окна торговли
 
 func _ready() -> void:
-	_root.find_node("NewGame").connect("pressed", Game, "new_attempt") # только для тестирования
-	
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
 	Game.connect("exp_changed", self, "_on_exp_changed")
+	Game.connect("new_character", self, "_on_new_character")
+	_continue.connect("pressed", Game, "new_character")
 	_trade_panel.player_item_list = _entity_list
 	_accept_dialog.connect("confirmed", self, "_on_accept_dialog_confirmed")
 	
@@ -28,6 +30,9 @@ func _ready() -> void:
 	
 	var label = _accept_dialog.get_label()
 	label.valign = Label.VALIGN_CENTER
+	
+	var intro = Resources.get_resource("Intro").instance()
+	_root.add_child(intro)
 
 func _on_exp_changed(value: int):
 # warning-ignore:integer_division
@@ -49,7 +54,12 @@ func show_trade_panel(merchant: GameEntity): # отображение окна �
 	Logger.tip(Logger.TIP_TRADE)
 	_trade_panel.show_panel(merchant)
 
+func continue():
+	_continue.visible = true
+
 func _on_accept_dialog_confirmed(): # пользователь закрыл окно с результатами события
+	_accept_timer.start()
+	yield(_accept_timer, "timeout") # задержка после нажатия
 	emit_signal("results_confirmed")
 
 func _on_player_entities_changed(entities: Array): # для обновления полоски здоровья
@@ -59,3 +69,6 @@ func _on_player_entities_changed(entities: Array): # для обновления
 	_health_bar_label.text = "%d/%d" % [player_health.x, player_health.y]
 	if player_health.x < player_health.y * 0.95:
 		Logger.tip(Logger.TIP_RESTORE)
+
+func _on_new_character(entity: GameEntity):
+	_continue.visible = false

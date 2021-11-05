@@ -54,6 +54,7 @@ func _define_actions():
 		_add_action("Подорвать фургон торговца", "_blow_up", [explosive])
 
 func _trade() -> String:
+	Game.state = Game.STATE_TRADE
 	GUI.show_trade_panel(merchant)
 	_set_merchant() # меняем следующего торговца
 	return ""

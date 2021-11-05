@@ -2,8 +2,11 @@
 
 extends Node
 
+#const NEW_CHARACTER_DATA_TEMPLATE := {"Text":"", "Heir":null, "Remains":[]}
+
 var _events := [] # список всех событий в игре
 var _tracked_events := [] # список событий, для которых нужно отслеживать расстояние
+var _last_event: GameEvent # ссылка на последнее игровое событие
 
 signal new_events # Новые события доступны для выбора
 
@@ -52,10 +55,18 @@ func untrack_event(event: GameEvent):
 	if _tracked_events.has(event):
 		_tracked_events.erase(event)
 
-func update_trackers(tracking_data: Array): # обновление отслеживаемых событий при выборе текущего события
-	for data in tracking_data:
+func set_current_event(event_data: Dictionary): # получены данные о текущем событии
+	Game.state = Game.STATE_EVENT
+	_last_event = event_data.Event
+	
+	for data in event_data.TrackingData: # обновление отслеживаемых событий при выборе текущего события
 		var tracker = data.Tracker
 		var distance = data.Distance
 		tracker.distance = abs(tracker.distance + distance) # при отрицательных значениях расстояние все равно положительное
 		if tracker.distance < 10:
 			tracker.probability = 1.0 # шанс выпадения максимальный
+
+func get_new_character_data() -> Dictionary: # возвращает данные о новом игровом персонаже в случае смерти текущего
+	if _last_event:
+		return _last_event.new_character_data
+	return {}

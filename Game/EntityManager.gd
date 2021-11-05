@@ -7,14 +7,16 @@ const ATTRIBUTES := ["NAME", "CLASS", "DESCRIPTION", "HEALTH", "TYPE", "GROUP", 
 enum TYPES {BIOLOGICAL, MECHANICAL, DIGITAL, MENTAL} # перечень типов для атрибута TYPE
 enum GROUPS {FOOD} # перечень групп, для объединения разных типов сущностей
 enum CLASSES {CREATURE, ITEM, ABILITY}
+enum REMAINS {ONLY_NOTEBOOK, NO_FOOD, NO_PETS}
 
 var player: GameEntity # ссылка на сущность игрока
+var notebook: GameEntity # ссылка на записную книжку
 
 signal player_entities_changed
 
 const ENTITIES := [
-	{NAME:"Игрок", CLASS:CLASSES.CREATURE, DESCRIPTION:"Персонаж за которого вы играете", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(100, 100), ATTACHMENT:["Удар"]},
-	{NAME:"Человек", CLASS:CLASSES.CREATURE, DESCRIPTION:"Неигровой персонаж", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(100, 100), ATTACHMENT:["Удар"]},
+	{NAME:"Записная книжка", CLASS:CLASSES.ITEM, DESCRIPTION:"Потрепанная, местами в пятнах крови, с большим количеством вырванных страниц"},
+	{NAME:"Человек", CLASS:CLASSES.CREATURE, DESCRIPTION:"Один из немногих, кто выжил в этом мире", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(100, 100), ATTACHMENT:["Удар"]},
 	{NAME:"Удар", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-5},
 	{NAME:"Собака", CLASS:CLASSES.CREATURE, DESCRIPTION:"Живая собака, друг человека", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(30, 30), COST:10, ATTACHMENT:["Укус"]},
 	{NAME:"Укус", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-10},
@@ -52,6 +54,10 @@ const ENTITIES := [
 	]
 
 
+func _ready() -> void:
+	notebook = create_entity("Записная книжка")
+	Game.connect("new_character", self, "_on_new_character")
+
 func get_base_entity(name: String) -> Dictionary: # возвращает копию словаря с базовыми данными сущности
 	for entity_data in ENTITIES:
 		if entity_data[NAME] == name:
@@ -73,9 +79,6 @@ func create_entity(data, custom_attributes := {}) -> GameEntity: # создае�
 	
 	new_entity.connect("delete_request", self, "_on_entity_delete", [new_entity])
 	new_entity.connect("entity_changed", self, "_on_entity_changed", [new_entity])
-	
-	if data[NAME] == "Игрок":
-		player = new_entity
 	
 	return new_entity
 
@@ -99,9 +102,15 @@ func create_person(possible_weapons := [], health := 0) -> GameEntity: # соз�
 	
 	return person
 
+func _on_new_character(entity: GameEntity):
+	player = entity
+	player.set_attribute(E.NAME, "Игрок")
+	_on_entity_changed(entity) # для обновления интерфейса под нового персонажа
+
 func _on_entity_changed(entity: GameEntity):
-	if entity == player or entity.owner == player:
-		emit_signal("player_entities_changed", player.get_entities()) # сингла для элементов GUI
+	if player:
+		if entity == player or entity.owner == player:
+			emit_signal("player_entities_changed", player.get_entities()) # сигнал для элементов GUI
 
 func _on_entity_delete(entity: GameEntity):
 	if entity == player:
@@ -133,6 +142,23 @@ func time_effects(): # потребление различных ресурсо�
 			entity.change_attribute(CAPACITY) # потребление расходников активных сущностей
 	
 	Logger.tip(Logger.TIP_TIME)
+
+func player_remains(keys:Array) -> Array: # определяет состав останков игрока исходя из переданных ключей
+	if REMAINS.ONLY_NOTEBOOK in keys:
+		return [notebook]
+	
+	var no_food = REMAINS.NO_FOOD in keys
+	var no_pets = REMAINS.NO_PETS in keys
+	
+	var remains = player.get_entities()
+	for entity in remains:
+		var ability: bool = entity.get_attribute(E.CLASS) == CLASSES.ABILITY # это сопособность
+		var food: bool = entity.get_attribute(E.GROUP) == GROUPS.FOOD if no_food else false # это еда (если нужно)
+		var pet: bool = entity.get_attribute(E.TYPE) == TYPES.BIOLOGICAL if no_pets else false # это питомец (если нужно)
+		if ability or food or pet: # убираем, если попадает хотябы в одну категорию
+			remains.erase(entity)
+	
+	return remains
 
 func clamp_int(value: int, min_value: int, max_value: int) -> int: # вариант clamp() для целых чисел
 	if value > max_value: return max_value

@@ -2,6 +2,7 @@
 
 extends Node
 
+enum {STATE_IDLE, STATE_EVENT, STATE_TRADE} # игровые состояния
 enum {PERK_NAME, PERK_DESCRIPTION}
 const PERKS := [
 	{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"},
@@ -11,8 +12,10 @@ var _experience : int # накопленный игровой опыт (не з�
 var _active_perks := [] # список активных перков (уникальных способностей) текущей сущности игрока
 var perk_points := 0 # количество доступных перков
 var _fail := false # флаг завершения текущей попытки
+#var fail_data := {"Text":"", "Heir":null, "Remains":[]} # данные для нового персонажа
+var state: int # текущее состояние игры
 
-signal new_attempt # Начало новой попытки
+signal new_character # Игра за нового персонажа
 signal perks_changed # состав активных перков изменился
 signal exp_changed # изменился игровой опыт
 
@@ -23,26 +26,36 @@ func _ready():
 	GUI.connect("results_confirmed", self, "_on_GUI_results")
 	GUI.connect("trade_complete", self, "_on_GUI_trade")
 
-func new_attempt():
+func new_character(): # создание нового персонажа или игра за существующего
 	_fail = false
 	_active_perks = []
 	emit_signal("perks_changed", _active_perks)
-	emit_signal("new_attempt")
-	Logger.tip(Logger.TIP_START)
-	
-	var player = E.create_entity("Игрок")
-	player.add_entity(E.create_entity("Хлеб"))
-#	player.add_entity(E.create_entity("Нож"))
-#	player.add_entity(E.create_entity("Собака"))
-#	player.add_entity(E.create_entity("Дробовик"))
-#	player.add_entity(E.create_entity("Патрон для дробовика", {E.QUANTITY:3}))
-#	player.add_entity(E.create_entity("Радиоприемник"))
-#	player.add_entity(E.create_entity("Аккумулятор", {E.CAPACITY:Vector2(10, 100)}))
-#	add_perk("Широкий кругозор")
-	
+	_experience = 0
 	emit_signal("exp_changed", _experience) # для первичного заполнения индикатора опыта
+
+	var new_character_data: Dictionary # данные для нового персонажа
+	if state == STATE_EVENT: # некоторые данные могут меняться событиями
+		new_character_data = EventManager.get_new_character_data()
+	state = STATE_IDLE
 	
-	EventManager.update_events()
+	var character: GameEntity = new_character_data.get("Entity")
+	if not character: # если персонажа еще нет в игре, создаем нового
+		character = E.create_entity("Человек", {E.HEALTH:Vector2(80 + randi() % 21, 100)})
+		var random_entity = E.randw([{"Ничего":1}, {"Собака":0.2}, {"Хлеб":0.5}, {"Нож":0.1}])
+		if random_entity != "Ничего":
+			character.add_entity(E.create_entity(random_entity), false, false, true)
+	
+	# если это первый персонаж, создаем записную книгу, иначе передаем останки предыдущего персонажа
+	var remains = E.player_remains(new_character_data.get("Remains", [E.REMAINS.ONLY_NOTEBOOK]))
+	emit_signal("new_character", character) # останки должны браться до того как ссылка на игрока измениться, но перед обновлением интерфейса, чтобы в новом логе было видно добавленные предметы
+	character.add_entities(remains)
+	
+	# если событием не указаны условия смерти предыдущего персонажа (или это первый персонаж) считаем что записную книгу выкинули за ненадобностью
+	var default_text = "Копаясь в очередной куче мусора в поисках чего-нибудь\nполезного, вы находите потрепанную записную книжку.\nВы сунули ее в карман, решив, что почитаете на досуге,\nи продолжили копаться в мусоре"
+	var text = new_character_data.get("Text", default_text)
+	GUI.show_accept_dialog(text)
+	
+	Logger.tip(Logger.TIP_START)
 
 func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
 	if not _fail: # события, приведшие к смерти, не увеличивают опыт
@@ -59,11 +72,16 @@ func increase_exp(value: int): # увеличивает накопленный �
 		emit_signal("exp_changed", _experience)
 
 func _next_step(): # следующий игровой цикл
-	if not _fail:
-		E.time_effects()
+	if _fail:
+		GUI.continue()
+	else:
+		if state != STATE_IDLE:
+			E.time_effects()
+			state = STATE_IDLE
 		EventManager.update_events()
 
 func fail() -> void:
+	Logger.info("Текущий персонаж умер!", Logger.INGAME_DAMAGE)
 	Logger.tip(Logger.TIP_DEATH)
 	_fail = true
 

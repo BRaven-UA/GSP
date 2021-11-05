@@ -6,7 +6,7 @@ onready var _menu: PopupMenu = $Menu # элементы меню созданы 
 
 func _ready() -> void:
 	Logger.connect("new_log_record", self, "_on_new_log_record")
-	Game.connect("new_attempt", self, "_on_new_attempt")
+	Game.connect("new_character", self, "_on_new_character")
 	_menu.connect("id_pressed", self, "_on_menu_item_pressed")
 
 func _gui_input(event: InputEvent) -> void:
@@ -44,7 +44,7 @@ func _log_print(text: String, category: int = Logger.INGAME, time := ""): # вы
 	pop()
 	newline()
 
-func _on_new_attempt():
+func _on_new_character(entity: GameEntity):
 	clear()
 
 func _on_menu_item_pressed(id: int):
