@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/progress_3.jpg-e0debb48dc15627396125aa9abee4c4e.stex"
+path="res://.import/Progress_2.png-ddca0200a1c4c76cd8aa666eb4e6fc8a.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://progress_3.jpg"
-dest_files=[ "res://.import/progress_3.jpg-e0debb48dc15627396125aa9abee4c4e.stex" ]
+source_file="res://Progress_2.png"
+dest_files=[ "res://.import/Progress_2.png-ddca0200a1c4c76cd8aa666eb4e6fc8a.stex" ]
 
 [params]
 

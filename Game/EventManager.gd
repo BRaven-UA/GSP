@@ -19,18 +19,22 @@ func _ready() -> void:
 func update_events(): # формирует новый список событий для выбора
 	var _available_events := [] # список событий, доступных для выбора игроком
 	var events_pool := [] # временный список доступных для выбора событий
+	var total_probability := 0.0 # суммарная вероятность доступных событий
 	
 	for event in _events: # формируем предварительный список событий, соответствующих требованиям
 		if event.is_available(): # у события могут быть условия его доступности для выбора
 			events_pool.append(event)
+			total_probability += event.probability
 	
 	events_pool.shuffle() # меняем порядок на случайный
 	
 	var event_quantity := 3 + int(Game.has_perk("Широкий кругозор"))
 	for i in event_quantity:
-		var cut_off = randf() # определяем "редкость" события
-		for event in events_pool:
-			if cut_off <= event.probability: # у событий есть вероятность возникновения
+		var cut_off = randf() * total_probability # отсечка на шкале суммарной вероятности
+		var accumulated_probability := 0.0 # накопительная вероятность перебранных событий
+		for event in events_pool: # перебираем события
+			accumulated_probability += event.probability # добавляем текущую вероятность
+			if cut_off <= accumulated_probability: # накопленная вероятность превысила отсечку, событие выбрано
 				var event_data := {"Event":event, "TrackingData":[]}
 				
 				for tracker in _tracked_events:

@@ -2,23 +2,23 @@ tool
 extends EditorScript
 
 func _run():
-#	test_randw()
-	print(char(9492))
+	test_randw()
+#	print(char(9492))
 
 func test_randw():
 	randomize()
-	var data := [{"Хлеб":0.6}, {"Тушенка":0.5}, {"Нож":0.2}, {"Топор":0.1}, {"Бензопила":0.05}, {"Радиоприемник":0.2}, {"Аккумулятор":0.2}]
+	var data := [{"Нож":0.25}, {"Пистолет":0.5}, {"Топор":1.0}]
 	
 	var result := {}
 #	result["Пусто"] = 0
 	for element in data:
 		result[element.keys()[0]] = 0
 	
-	for i in 1000:
-		result[randw(data)] += 0.1
+	for i in 10000:
+		result[randw(data)] += 0.01
 	print(result)
 
-func randw(data: Array): # генератор взвешенных случайных чисел. Принимает массив словарей {ключ:вероятность}. Функция возвращает ключ выбранного случайного элемента. Пример использования: randw([{"Нож":0.25}, {"Топор":1.0}, {"Пистолет":0.5}]) вернет "Нож" с вероятностью 9%, "Топор" - 70% и "Пистолет" - 21% (в сумме 100%)
+func randw1(data: Array): # генератор взвешенных случайных чисел. Принимает массив словарей {ключ:вероятность}. Функция возвращает ключ выбранного случайного элемента. Пример использования: randw([{"Нож":0.25}, {"Топор":1.0}, {"Пистолет":0.5}]) вернет "Нож" с вероятностью 9%, "Топор" - 70% и "Пистолет" - 21% (в сумме 100%)
 	var max_value := 0.0
 	for element in data:
 		max_value = max(max_value, element.values()[0]) # находим максимальную вероятность
@@ -47,6 +47,20 @@ func randw2(data: Array):
 		var random = randi() % pool.size()
 		return pool[random].keys()[0]
 	return "Пусто"
+
+func randw(data: Array): # генератор взвешенных случайных чисел (pigzinzspace#7306 edition). Принимает массив словарей {ключ:вероятность}. Функция возвращает ключ выбранного случайного элемента. Пример использования: randw([{"Нож":0.25}, {"Пистолет":0.5}, {"Топор":1.0}]) вернет "Нож" с вероятностью 13%, "Топор" - 58% и "Пистолет" - 29% (в сумме 100%)
+	var mass = 0.0
+	for element in data:
+		mass += element.values()[0] # считаем сумму всех весов
+	
+	data.shuffle() # тасуем массив
+	
+	var cut_off = randf() * mass # отсечка для общего веса
+	var mass_total = 0.0 # вес наростающим итогом
+	for element in data:
+		mass_total += element.values()[0]
+		if cut_off <= mass_total: # возвращаем элемент в который попал катоф при рандомном разрезании перемешанного массива
+			return element.keys()[0] 
 
 static func _sort_values(a: Dictionary, b: Dictionary) -> bool:
 	var a_value = a.values()[0]
