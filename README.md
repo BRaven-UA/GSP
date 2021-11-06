@@ -1,8 +1,9 @@
-# Text-based-adventure
-Survival adventure without any graphics
+# П.Г.С. (рабочее название)
+Игра с элементами adventure и roguelike. Без графики и звука
 
-## Current progress (10 october 2021):
+## Текущий прогресс (06.11.2021):
 
-![1](progress_1.jpg)
-![2](progress_2.jpg)
-![3](progress_3.jpg)
+![1](Progress_1.jpg)
+![2](Progress_2.png)
+![3](Progress_3.png)
+![4](Progress_4.png)
