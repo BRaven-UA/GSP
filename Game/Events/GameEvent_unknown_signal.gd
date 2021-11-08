@@ -10,7 +10,9 @@ func _init() -> void:
 	probability = 0.25
 
 func is_available() -> bool:
-	return E.player.find_entity(E.NAME, "Прослушка радиоэфира", true) != null
+	var has_note: bool = E.player.find_entity(E.NAME, "Текст радиосигнала") != null
+	var can_receive: bool = E.player.find_entity(E.NAME, "Прослушка радиоэфира", true) != null
+	return can_receive and not has_note # доступен только если может слушать эфир и нет расшифрованного текста
 
 func _define_actions():
 	_add_action("Попытаться расшифровать", "_decode")
@@ -31,8 +33,9 @@ func _decode() -> String:
 		result_text += "\nЭто был сигнал о помощи с координатами места. Семья\nне может открыть входной люк в персональном подземном\nбункере. Вы записали текст сообщения на листок"
 		
 		E.player.add_entity(E.create_entity("Текст радиосигнала")) # предмет, необходимый для доступа к следующему событию в цепочке
-		
-		probability *= 0.25 # вероятность другого сигнала уменьшается в 4 раза после каждой расшифровки
+		EventManager.track_event(EventManager.get_event("Подземный бункер"))
+		decode_chance = 0.25 # в случае утери текста следующая дешифровка будет быстрее
+#		probability *= 0.25 # вероятность другого сигнала уменьшается в 4 раза после каждой расшифровки
 		
 		return result_text
 	else:

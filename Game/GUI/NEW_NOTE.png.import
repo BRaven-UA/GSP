@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/PLUS.png-f5180cf3a5f9a7f9dc2df8328aa3bafa.stex"
+path="res://.import/NEW_NOTE.png-86a44845c90957750f1674eb5afff4e5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Game/GUI/PLUS.png"
-dest_files=[ "res://.import/PLUS.png-f5180cf3a5f9a7f9dc2df8328aa3bafa.stex" ]
+source_file="res://Game/GUI/NEW_NOTE.png"
+dest_files=[ "res://.import/NEW_NOTE.png-86a44845c90957750f1674eb5afff4e5.stex" ]
 
 [params]
 

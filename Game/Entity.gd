@@ -130,9 +130,15 @@ func change_attribute(name: int, value = -1, directly := true) -> int:
 	return surplus
 
 func add_entity(entity: GameEntity, activate := false, merge := true, silent := false): # добавляет сущность к собственным, опционально активирует ее, опционально объединяет с подобными
+	Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
+	
 	if self == E.player:
 		Logger.info("Добавлено: " + entity.get_text(), Logger.INGAME_TAKE)
-	Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
+		if entity.get_attribute(E.GROUP) == E.GROUPS.NOTES:
+			E.notebook.add_entity(entity) # записки сразу добавляем в записную книжку
+			E.emit_signal("notebook_updated", entity)
+			Logger.tip(Logger.TIP_NOTE)
+			return
 	
 	var merged = merge_entity(entity) if merge else null # объединение сущностей (если нужно)
 	if merged:

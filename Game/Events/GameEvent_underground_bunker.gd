@@ -6,8 +6,10 @@ var secondary_condition := ["Топор", "Бензопила", "Динамит"
 var failed := false # попытка сдвинуть бревно неудалась, чтобы событие снова появилось в доступных нужно выполнить дополнительное требование
 
 func _init() -> void:
-	name = "Место, указанное в сигнале о помощи"
+	name = "Подземный бункер"
 	description = "Прибыв на место вы обнаруживаете что входной люк привалило огромным деревом"
+	probability = 0.0
+	distance = 50 + randi() % 151 # от 50 до 200
 
 func is_available() -> bool:
 	var primary: bool = E.player.find_entity(E.NAME, "Текст радиосигнала") != null
@@ -26,6 +28,21 @@ func is_available() -> bool:
 		return primary and secondary # нужны оба условия
 	
 	return primary
+
+func get_tracking_text(delta: int) -> String:
+	if not E.player.find_entity(E.NAME, "Текст радиосигнала"): # координаты пропали
+		EventManager.untrack_event(self) # прекращаем отслеживание
+		return ""
+	
+	var text := "Подземный бункер: "
+	var result_distance = distance + delta
+	
+	if distance < 10:
+		text += "где-то рядом"
+	else:
+		text += "расстояние %d" % result_distance
+	
+	return text
 
 func setup():
 	bonus_info = "Понадобится топор, бензопила или динамит"
@@ -71,6 +88,7 @@ func _success(entity: GameEntity) -> String:
 	E.player.add_entity(E.create_entity("Канистра с бензином", {E.CAPACITY:Vector2(10, 10)}))
 	
 	E.player.remove_entity(E.player.find_entity(E.NAME, "Текст радиосигнала"))
+	EventManager.remove_event(self) # одноразовое событие
 	
 	return result_text
 

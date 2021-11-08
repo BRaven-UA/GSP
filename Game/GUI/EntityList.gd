@@ -5,12 +5,14 @@ extends ItemList
 enum MENU_ITEMS {SWITCH = 100, SPLIT, DELETE, SORT} # перечень возможных ID для меню
 
 onready var _menu := $"PopupMenu" # контекстное меню (одно на все сущности, обновляется под выбранную сущность)
-
+var _notebook_index: int
 
 func _ready() -> void:
 	clear()
 	
 	E.connect("player_entities_changed", self, "_on_player_entities_changed") # обновляем список при любом изменении сущностей игрока
+	E.connect("notebook_updated", self, "_on_notebook_updated")
+	connect("item_selected", self, "_on_item_selected")
 	connect("item_rmb_selected", self, "_on_item_rmb_selected")
 	_menu.connect("id_pressed", self, "_on_menu_item_pressed")
 
@@ -20,6 +22,9 @@ func _on_player_entities_changed(entities: Array) -> void: # сюда перед
 	for entity in E.player.get_entities():
 		if entity.get_attribute(E.CLASS) != E.CLASSES.ABILITY:
 			_add_item(entity)
+
+func _on_notebook_updated(new_note: GameEntity):
+	set_item_icon(_notebook_index, Resources.get_resource("NEW NOTE"))
 
 func _add_item(entity: GameEntity) -> void:
 	var index = get_item_count() # индекс для нового пункта
@@ -31,16 +36,25 @@ func _add_item(entity: GameEntity) -> void:
 		Logger.tip(Logger.TIP_ACTIVE)
 	
 	if entity == E.notebook:
-		set_item_disabled(index, true)
+		_notebook_index = index
+		set_item_icon(index, Resources.get_resource("NOTEBOOK"))
 	
 	set_item_tooltip(index, entity.get_full_info())
 	set_item_metadata(index, entity) # сохраняем ссылку на сущность
 
+func _on_item_selected(index: int):
+	if index == _notebook_index:
+		set_item_icon(index, Resources.get_resource("NOTEBOOK"))
+		GUI.toggle_notes()
+
 func _on_item_rmb_selected(index: int, position: Vector2) -> void: # формирование меню по индексу сущности
+	var entity: GameEntity = get_item_metadata(index)
+	if entity == E.notebook:
+		return
+	
 	_menu.rect_position = rect_position + position + Vector2(10, 0) # устанавливаем позицию меню чуть правее от места клика
 	_menu.clear()
 	
-	var entity: GameEntity = get_item_metadata(index)
 	var quantity = entity.get_attribute(E.QUANTITY)
 	var capacity = entity.get_attribute(E.CAPACITY, true, Vector2.ZERO)
 	

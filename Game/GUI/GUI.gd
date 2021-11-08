@@ -9,7 +9,8 @@ onready var _accept_timer: Timer = _accept_dialog.get_node("Timer")
 onready var _trade_panel: Panel = _root.get_node("TradePanel")
 onready var _continue: Button = _root.find_node("Continue")
 onready var _entity_list: ItemList = _root.find_node("EntityList")
-#onready var _perk_list: ItemList = _root.find_node("PerkList")
+onready var _notes: RichTextLabel = _root.find_node("Notes")
+onready var _center_container: CenterContainer = _root.find_node("CenterContainer")
 onready var _health_bar: ProgressBar = _root.find_node("HealthBar")
 onready var _health_bar_label: Label = _health_bar.get_node("Label")
 onready var _exp_bar: ProgressBar = _root.find_node("ExpBar")
@@ -19,8 +20,10 @@ signal trade_complete # сообщает о закрытии окна торго
 
 func _ready() -> void:
 	E.connect("player_entities_changed", self, "_on_player_entities_changed")
+	E.connect("notebook_updated", self, "_on_notebook_updated")
 	Game.connect("exp_changed", self, "_on_exp_changed")
 	Game.connect("new_character", self, "_on_new_character")
+	_notes.connect("meta_clicked", self, "_on_meta_clicked")
 	_continue.connect("pressed", Game, "new_character")
 	_trade_panel.player_item_list = _entity_list
 	_accept_dialog.connect("confirmed", self, "_on_accept_dialog_confirmed")
@@ -33,13 +36,6 @@ func _ready() -> void:
 	
 	var intro = Resources.get_resource("Intro").instance()
 	_root.add_child(intro)
-
-func _on_exp_changed(value: int):
-# warning-ignore:integer_division
-	_exp_bar.min_value = value / 100 * 100
-	_exp_bar.max_value = _exp_bar.min_value + 100
-	_exp_bar.value = value
-	_exp_bar.hint_tooltip = "текущий опыт %d/%d" % [value, _exp_bar.max_value]
 
 func show_accept_dialog(text: String): # отображение информационного окна с одной кнопкой "ОК"
 	if text:
@@ -54,8 +50,12 @@ func show_trade_panel(merchant: GameEntity): # отображение окна �
 	Logger.tip(Logger.TIP_TRADE)
 	_trade_panel.show_panel(merchant)
 
-func continue():
+func show_continue():
 	_continue.visible = true
+
+func toggle_notes():
+	_center_container.visible = not _center_container.visible
+	_notes.visible = not _notes.visible
 
 func _on_accept_dialog_confirmed(): # пользователь закрыл окно с результатами события
 	_accept_timer.start()
@@ -72,3 +72,22 @@ func _on_player_entities_changed(entities: Array): # для обновления
 
 func _on_new_character(entity: GameEntity):
 	_continue.visible = false
+
+func _on_exp_changed(value: int):
+# warning-ignore:integer_division
+	_exp_bar.min_value = value / 100 * 100
+	_exp_bar.max_value = _exp_bar.min_value + 100
+	_exp_bar.value = value
+	_exp_bar.hint_tooltip = "текущий опыт %d/%d" % [value, _exp_bar.max_value]
+
+func _on_notebook_updated(new_note: GameEntity):
+	var caption = new_note.get_attribute(E.NAME)
+	var bbcode = "\n\n[center]%s[/center]\n\n" % caption
+	var note_text = new_note.get_attribute(E.DESCRIPTION)
+	_notes.append_bbcode(bbcode + note_text)
+	
+	if "[url" in note_text:
+		Logger.tip(Logger.TIP_META)
+
+func _on_meta_clicked(meta):
+	pass

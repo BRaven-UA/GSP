@@ -13,6 +13,8 @@ func _set_merchant():
 	if probability:
 		name_index = randi() % names.size()
 		description = "Бронированный фургон с надписью '%s'. За рулем вооруженный охранник, а сбоку от него в кузове проделана прорезь для обмена товарами" % names[name_index]
+	else: # торговцы закончились :)
+		EventManager.remove_event(self)
 
 func setup():
 	merchant = E.create_entity("Человек")
@@ -31,7 +33,7 @@ func setup():
 			data[E.CAPACITY].x = data[E.CAPACITY].y
 		
 		if name.begins_with("Патрон"):
-			data[E.QUANTITY] = 5 + randi() % 30
+			data[E.QUANTITY] = 1 + randi() % 11
 		
 		var consumable_name = data.get(E.CONSUMABLES)
 		if consumable_name: # если у сущности есть расходники, добавляем их

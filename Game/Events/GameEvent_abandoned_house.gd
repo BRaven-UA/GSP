@@ -25,9 +25,9 @@ func setup():
 		occupant = E.create_person([{"Ничего":1}, {"Нож":0.6}, {"Топор":0.3}, {"Охотничья винтовка":0.4}]) # возможное оружие жильца и шансы его выпадения (65%? 20%, 6%, 10%)
 		occupant.add_entities(loot)
 		aggressive = randf() < 0.5
-	
 		_target_bonus_info(occupant)
-	
+	else:
+		occupant = null
 
 func _define_actions():
 	_add_action("Пройти мимо", "_pass_by")

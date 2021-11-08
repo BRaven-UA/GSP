@@ -56,6 +56,7 @@ func new_character(): # создание нового персонажа или 
 	GUI.show_accept_dialog(text)
 	
 	Logger.tip(Logger.TIP_START)
+	Logger.tip(Logger.TIP_NOTEBOOK)
 
 func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
 	if not _fail: # события, приведшие к смерти, не увеличивают опыт
@@ -73,7 +74,7 @@ func increase_exp(value: int): # увеличивает накопленный �
 
 func _next_step(): # следующий игровой цикл
 	if _fail:
-		GUI.continue()
+		GUI.show_continue()
 	else:
 		if state != STATE_IDLE:
 			E.time_effects()

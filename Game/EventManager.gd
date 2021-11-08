@@ -2,8 +2,6 @@
 
 extends Node
 
-#const NEW_CHARACTER_DATA_TEMPLATE := {"Text":"", "Heir":null, "Remains":[]}
-
 var _events := [] # список всех событий в игре
 var _tracked_events := [] # список событий, для которых нужно отслеживать расстояние
 var _last_event: GameEvent # ссылка на последнее игровое событие
@@ -15,6 +13,16 @@ func _ready() -> void:
 	for name in Resources.get_resource_list():
 		if name.begins_with("GameEvent"):
 			_events.append(Resources.get_resource(name).new())
+
+func get_event(name: String) -> GameEvent: # поиск события по имени
+	for event in _events:
+		if event.name == name:
+			return event
+	return null
+
+func remove_event(event: GameEvent): # удаляет событие из игры
+	untrack_event(event)
+	_events.erase(event)
 
 func update_events(): # формирует новый список событий для выбора
 	var _available_events := [] # список событий, доступных для выбора игроком
@@ -28,7 +36,7 @@ func update_events(): # формирует новый список событи�
 	
 	events_pool.shuffle() # меняем порядок на случайный
 	
-	var event_quantity := 3 + int(Game.has_perk("Широкий кругозор"))
+	var event_quantity := 3 + int(Game.has_perk("Широкий кругозор")) # количество собыйти для выбора
 	for i in event_quantity:
 		var cut_off = randf() * total_probability # отсечка на шкале суммарной вероятности
 		var accumulated_probability := 0.0 # накопительная вероятность перебранных событий
@@ -47,6 +55,7 @@ func update_events(): # формирует новый список событи�
 				
 				_available_events.append(event_data)
 				events_pool.erase(event) # исключаем повторный выбор
+				total_probability -= event.probability
 				break
 	
 	emit_signal("new_events", _available_events) # на сигнал должен реагировать интерфейс EventList
@@ -54,10 +63,13 @@ func update_events(): # формирует новый список событи�
 func track_event(event: GameEvent):
 	if not _tracked_events.has(event):
 		_tracked_events.append(event)
+		Logger.info("Начато отслеживание %s" % event.name)
+		Logger.tip(Logger.TIP_TRACKING)
 
 func untrack_event(event: GameEvent):
 	if _tracked_events.has(event):
 		_tracked_events.erase(event)
+		Logger.info("Отслеживание %s прекращено" % event.name)
 
 func set_current_event(event_data: Dictionary): # получены данные о текущем событии
 	Game.state = Game.STATE_EVENT
@@ -68,7 +80,7 @@ func set_current_event(event_data: Dictionary): # получены данные 
 		var distance = data.Distance
 		tracker.distance = abs(tracker.distance + distance) # при отрицательных значениях расстояние все равно положительное
 		if tracker.distance < 10:
-			tracker.probability = 1.0 # шанс выпадения максимальный
+			tracker.probability = 2.0 # шанс выпадения в 2 раза больше обычных событий
 
 func get_new_character_data() -> Dictionary: # возвращает данные о новом игровом персонаже в случае смерти текущего
 	if _last_event:
