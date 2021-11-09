@@ -6,6 +6,7 @@ enum MENU_ITEMS {SWITCH = 100, SPLIT, DELETE, SORT} # перечень возм�
 
 onready var _menu := $"PopupMenu" # контекстное меню (одно на все сущности, обновляется под выбранную сущность)
 var _notebook_index: int
+var _notebook_icon: Texture = Resources.get_resource("NOTEBOOK")
 
 func _ready() -> void:
 	clear()
@@ -24,7 +25,8 @@ func _on_player_entities_changed(entities: Array) -> void: # сюда перед
 			_add_item(entity)
 
 func _on_notebook_updated(new_note: GameEntity):
-	set_item_icon(_notebook_index, Resources.get_resource("NEW NOTE"))
+	_notebook_icon = Resources.get_resource("NEW_NOTE")
+	set_item_icon(_notebook_index, _notebook_icon)
 
 func _add_item(entity: GameEntity) -> void:
 	var index = get_item_count() # индекс для нового пункта
@@ -37,14 +39,15 @@ func _add_item(entity: GameEntity) -> void:
 	
 	if entity == E.notebook:
 		_notebook_index = index
-		set_item_icon(index, Resources.get_resource("NOTEBOOK"))
+		set_item_icon(index, _notebook_icon)
 	
 	set_item_tooltip(index, entity.get_full_info())
 	set_item_metadata(index, entity) # сохраняем ссылку на сущность
 
 func _on_item_selected(index: int):
 	if index == _notebook_index:
-		set_item_icon(index, Resources.get_resource("NOTEBOOK"))
+		_notebook_icon = Resources.get_resource("NOTEBOOK")
+		set_item_icon(index, _notebook_icon)
 		GUI.toggle_notes()
 
 func _on_item_rmb_selected(index: int, position: Vector2) -> void: # формирование меню по индексу сущности

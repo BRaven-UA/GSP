@@ -57,7 +57,9 @@ func _target_bonus_info(target: GameEntity): # формирует бонусну
 	for entity in target.get_entities(false, true): # активные сущности
 		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
 		if change_health < 0:
-			bonus_info = "%s, оружие: %s (урон %d)" % [target.get_text(), entity.get_text(), -change_health]
+			if bonus_info:
+				bonus_info += "\n"
+			bonus_info += "%s, оружие: %s (урон %d)" % [target.get_text(), entity.get_text(), -change_health]
 			return
 
 func _add_hostile_actions(target: GameEntity, text := "Напасть"): # стандартная наборка из всех возможных вариантов нападения на цель
@@ -69,7 +71,15 @@ func _add_hostile_actions(target: GameEntity, text := "Напасть"): # ст�
 				var entity_text = "" if entity == E.player else ", используя " + entity.get_text()
 				var action_text = "%s%s (урон %d)" % [text, entity_text, abs(change_health)]
 				var attacker = entity if entity.get_attribute(E.HEALTH) else E.player
-				_add_action(action_text, "_duel", [target, attacker], entity)
+				
+				var unique_action := true # проверяем на дублирование
+				for action in actions:
+					if action.Text == action_text:
+						unique_action = false
+						break
+				if unique_action:
+					_add_action(action_text, "_duel", [target, attacker], entity)
+				
 				Logger.tip(Logger.TIP_WEAPON)
 			else:
 				Logger.tip(Logger.TIP_LOAD)

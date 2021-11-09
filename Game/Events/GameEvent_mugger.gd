@@ -43,7 +43,7 @@ func _dont_resist(): # позволить себя ограбить
 func _loss_items() -> String:
 	var items := []
 	for entity in E.player.get_entities():
-		if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM: # забирает только предметы
+		if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM and entity != E.notebook: # забирает только предметы, кроме записной книжки
 			items.append(entity)
 	
 	E.player.remove_entities(items) # для "тихого" удаления

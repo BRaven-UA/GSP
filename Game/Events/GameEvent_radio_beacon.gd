@@ -20,7 +20,7 @@ func get_tracking_text(delta: int) -> String:
 	
 	if distance > 97:
 		text += "нет сигнала"
-	elif distance < 10:
+	elif result_distance < 10:
 		text += "где-то рядом"
 	else:
 		text += "%d%% мощность сигнала" % (100 - result_distance)

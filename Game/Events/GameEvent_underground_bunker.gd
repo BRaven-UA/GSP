@@ -37,7 +37,7 @@ func get_tracking_text(delta: int) -> String:
 	var text := "Подземный бункер: "
 	var result_distance = distance + delta
 	
-	if distance < 10:
+	if result_distance < 10:
 		text += "где-то рядом"
 	else:
 		text += "расстояние %d" % result_distance

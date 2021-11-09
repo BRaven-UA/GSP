@@ -139,9 +139,11 @@ func _on_item_list_nothing_selected(item_list: ItemList):
 	_on_item_list_multiselected(0, false, item_list)
 
 func _on_confirm_pressed():
+	GUI.input_delay()
 	E.player.remove_entities(_player_selection)
 	E.player.add_entities(_merchant_selection)
 	_clear()
 
 func _on_cancel_pressed():
+	GUI.input_delay()
 	_clear()

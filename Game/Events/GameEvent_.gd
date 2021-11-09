@@ -12,7 +12,23 @@ func _init() -> void:
 func is_available() -> bool:
 	return E.player.find_entity(E.NAME, "", true) != null
 
+func get_tracking_text(delta: int) -> String:
+	if not E.player.find_entity(E.NAME, "Текст радиосигнала"): # координаты пропали
+		EventManager.untrack_event(self) # прекращаем отслеживание
+		return ""
+	
+	var text := "Подземный бункер: "
+	var result_distance = distance + delta
+	
+	if result_distance < 10:
+		text += "где-то рядом"
+	else:
+		text += "расстояние %d" % result_distance
+	
+	return text
+
 func setup():
+	bonus_info = ""
 	entity = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
 	_target_bonus_info(entity)
 
@@ -39,8 +55,9 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 
 
 
-"""" 
+""" 
 
 
 
+- настроить повторяемость события
 """

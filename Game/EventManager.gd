@@ -71,6 +71,12 @@ func untrack_event(event: GameEvent):
 		_tracked_events.erase(event)
 		Logger.info("Отслеживание %s прекращено" % event.name)
 
+func toggle_tracking(event: GameEvent):
+	if _tracked_events.has(event):
+		untrack_event(event)
+	else:
+		track_event(event)
+
 func set_current_event(event_data: Dictionary): # получены данные о текущем событии
 	Game.state = Game.STATE_EVENT
 	_last_event = event_data.Event

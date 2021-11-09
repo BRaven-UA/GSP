@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Small_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/GUI_Theme.tres" type="Theme" id=2]
@@ -9,7 +9,6 @@
 [ext_resource path="res://Game/GUI/Theme/Exp_Stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://Game/GUI/Log.gd" type="Script" id=8]
 [ext_resource path="res://Game/GUI/PerkList.gd" type="Script" id=9]
-[ext_resource path="res://Game/GUI/Theme/Handwritten_font.tres" type="DynamicFont" id=10]
 
 [node name="MainControl" type="Control"]
 anchor_right = 1.0
@@ -57,11 +56,9 @@ __meta__ = {
 [node name="Notes" type="RichTextLabel" parent="MainContainer/VBoxContainer"]
 visible = false
 margin_right = 526.0
-margin_bottom = 597.0
+margin_bottom = 296.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/normal_font = ExtResource( 10 )
-custom_constants/line_separation = -5
 bbcode_enabled = true
 bbcode_text = "[indent]"
 tab_size = 6
@@ -362,6 +359,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Timer" type="Timer" parent="AcceptDialog"]
-wait_time = 0.5
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.3
 one_shot = true

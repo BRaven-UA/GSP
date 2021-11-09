@@ -41,6 +41,8 @@ func new_character(): # создание нового персонажа или 
 	var character: GameEntity = new_character_data.get("Entity")
 	if not character: # если персонажа еще нет в игре, создаем нового
 		character = E.create_entity("Человек", {E.HEALTH:Vector2(80 + randi() % 21, 100)})
+		if OS.is_debug_build():
+			character.add_entity(E.create_entity("Собака"))
 		var random_entity = E.randw([{"Ничего":1}, {"Собака":0.2}, {"Хлеб":0.5}, {"Нож":0.1}])
 		if random_entity != "Ничего":
 			character.add_entity(E.create_entity(random_entity), false, false, true)
@@ -75,11 +77,22 @@ func increase_exp(value: int): # увеличивает накопленный �
 func _next_step(): # следующий игровой цикл
 	if _fail:
 		GUI.show_continue()
-	else:
-		if state != STATE_IDLE:
-			E.time_effects()
-			state = STATE_IDLE
+	elif state == STATE_IDLE:
 		EventManager.update_events()
+	else:
+		time_effects()
+
+func time_effects(): # потребление различных ресурсов игрока в результате проведения события
+	for entity in E.player.get_entities(true): # для всех сущностей игрока, влючая его самого
+		if entity.get_attribute(E.TYPE) == E.TYPES.BIOLOGICAL:
+			entity.change_attribute(E.HEALTH) # снижение "сытости" для биологических сущностей
+		
+		if entity.get_attribute(E.ACTIVE):
+			entity.change_attribute(E.CAPACITY) # потребление расходников активных сущностей
+	
+	Logger.tip(Logger.TIP_TIME)
+	state = STATE_IDLE
+	_next_step()
 
 func fail() -> void:
 	Logger.info("Текущий персонаж умер!", Logger.INGAME_DAMAGE)

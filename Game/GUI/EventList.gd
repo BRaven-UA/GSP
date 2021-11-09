@@ -43,6 +43,7 @@ func _get_frame() -> Button: # ищет в пуле незанятую рамк�
 	return frame
 
 func _on_frame_pressed(selected_frame: MarginContainer) -> void: # обработка нажатия на рамку события
+	GUI.input_delay()
 	EventManager.set_current_event(selected_frame.event_data)
 	
 	_clear(selected_frame) # очищаем все кроме выбранной рамки
@@ -56,6 +57,7 @@ func _on_player_entities_changed(entities: Array, active_frame: MarginContainer)
 	visible = true
 
 func _on_action_pressed(event_data: Dictionary, action_index: int): # выбор одного из действий активной рамки события
+	GUI.input_delay()
 	E.disconnect("player_entities_changed", self, "_on_player_entities_changed")
 	_clear() # скрыть это окно после выбора действия
 	event_data.Event.apply_action(action_index)
