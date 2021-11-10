@@ -18,7 +18,7 @@ func _define_actions():
 
 func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 	var result_text := "Вы решили, что лучшая защита - это нападение и\n"
-	result_text += "сами напали на ублюдка.\n" if attacker == E.player else "натравили %s на ублюдка, в надежде выиграть\nвремя для бегства.\n" % attacker.get_attribute(E.NAME)
+	result_text += "сами напали на мерзавца.\n" if attacker == E.player else "натравили %s на мерзавца, в надежде выиграть\nвремя для бегства.\n" % attacker.get_attribute(E.NAME)
 	result_text += ._duel(defender, attacker)
 	
 	if mugger.get_attribute(E.HEALTH).x < 1: # грабитель убит
@@ -75,7 +75,7 @@ func _escape() -> String:
 				E.player.remove_entity(lost_item)
 	
 	else: # грабитель вас догнал, избил и ограбил
-		result_text += "Идея была так себе. Ублюдок все равно вас догнал\n"
+		result_text += "Идея была так себе. Мерзавец все равно вас догнал\n"
 		
 		var health = E.player.get_attribute(E.HEALTH)
 		var min_health = min(5, health.x)

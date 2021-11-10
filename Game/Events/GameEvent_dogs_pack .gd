@@ -18,6 +18,9 @@ func setup():
 func _define_actions():
 	_add_hostile_actions(pack_leader, "Атаковать вожака")
 	
+	if Game.has_perk("Зоолог"):
+		_add_action("Показать силу", "_dominate")
+	
 	for entity in E.player.get_entities():
 		var consumables = entity.get_attribute(E.CONSUMABLES, true, "")
 		if consumables.begins_with("Патрон") and entity.get_attribute(E.CAPACITY, true, Vector2.ZERO).x:
@@ -40,6 +43,9 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 		result_text += "Вожак убит, и свора разбегается кто куда."
 	
 	return result_text
+
+func _dominate():
+	return "Пользуясь своими познаниями в зоологии вы даете\nпонять вожаку своры что готовы бросить ему вызов.\nВожак какое-то время демонстрирует агрессивное\nповедение, но решив что с вами лучше не связываться,\nразворачивается и уводит свору прочь"
 
 func _air_shot(entity: GameEntity):
 	entity.change_attribute(E.CAPACITY)

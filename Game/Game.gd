@@ -6,13 +6,13 @@ enum {STATE_IDLE, STATE_EVENT, STATE_TRADE} # игровые состояния
 enum {PERK_NAME, PERK_DESCRIPTION}
 const PERKS := [
 	{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"},
-	{PERK_NAME:"Широкий кругозор", PERK_DESCRIPTION:"Увеличивает на 1 количество событий для выбора"}]
+	{PERK_NAME:"Широкий кругозор", PERK_DESCRIPTION:"Увеличивает на 1 количество событий для выбора"},
+	{PERK_NAME:"Зоолог", PERK_DESCRIPTION:"Дает преимущества при взаимодействии с животными"}]
 
 var _experience : int # накопленный игровой опыт (не зависит от сущности игрока)
 var _active_perks := [] # список активных перков (уникальных способностей) текущей сущности игрока
 var perk_points := 0 # количество доступных перков
 var _fail := false # флаг завершения текущей попытки
-#var fail_data := {"Text":"", "Heir":null, "Remains":[]} # данные для нового персонажа
 var state: int # текущее состояние игры
 
 signal new_character # Игра за нового персонажа
@@ -42,7 +42,7 @@ func new_character(): # создание нового персонажа или 
 	if not character: # если персонажа еще нет в игре, создаем нового
 		character = E.create_entity("Человек", {E.HEALTH:Vector2(80 + randi() % 21, 100)})
 		if OS.is_debug_build():
-			character.add_entity(E.create_entity("Собака"))
+			character.add_entity(E.create_entity("Учебник по зоологии"))
 		var random_entity = E.randw([{"Ничего":1}, {"Собака":0.2}, {"Хлеб":0.5}, {"Нож":0.1}])
 		if random_entity != "Ничего":
 			character.add_entity(E.create_entity(random_entity), false, false, true)
@@ -94,19 +94,19 @@ func time_effects(): # потребление различных ресурсо�
 	state = STATE_IDLE
 	_next_step()
 
-func fail() -> void:
+func fail():
 	Logger.info("Текущий персонаж умер!", Logger.INGAME_DAMAGE)
 	Logger.tip(Logger.TIP_DEATH)
 	_fail = true
 
 func add_perk(name: String):
-	if perk_points:
-		for perk in PERKS:
-			if perk[PERK_NAME] == name:
-				_active_perks.append(perk)
-				perk_points -= 1
-				emit_signal("perks_changed", _active_perks)
-				return
+	for perk in PERKS:
+		if perk[PERK_NAME] == name:
+			_active_perks.append(perk)
+			perk_points -= 1
+			Logger.info("Изучена способность %s" % name, Logger.INGAME_EXP)
+			emit_signal("perks_changed", _active_perks)
+			return
 
 func remove_perk(name: String):
 	for perk in _active_perks:

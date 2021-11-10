@@ -65,7 +65,7 @@ func _on_item_rmb_selected(index: int, position: Vector2) -> void: # форми�
 	if activable != null:
 		var turn_on_text = "Активировать"
 		if not capacity.x:
-			turn_on_text += " (нужна зарядка)"
+			turn_on_text += " (изучено)" if entity.get_attribute(E.KNOWLEDGE) else " (нужна зарядка)"
 		
 		var menu_index = _menu.get_item_count() # индекс для нового пункта
 		_menu.add_item("Деактивировать" if activable else turn_on_text, MENU_ITEMS.SWITCH)

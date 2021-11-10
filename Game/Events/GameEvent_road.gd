@@ -16,6 +16,9 @@ func _define_actions():
 	var dog = E.player.find_entity(E.NAME, "Собака")
 	if dog:
 		_add_action("Послать вперед собаку", "_send_scout", [dog])
+	
+	if Game.has_perk("Зоолог"):
+		_add_action("Охотиться", "_hunt")
 
 func _go_along() -> String:
 	var result_text := "Пройдя по дороге вы не встретили ничего необычного"
@@ -66,3 +69,23 @@ func _send_scout(scout: GameEntity) -> String:
 			result_text += "В итоге\nничего интересного ни она, ни вы так и не обнаружили"
 	
 	return result_text
+
+func _hunt():
+	var result_text := "Пользуясь своими познаниями в зоологии, вы сооружаете\nнесколько ловушек из подручных материалов.\n"
+	
+	var result = randi() % 4
+	if result:
+		E.player.add_entity(E.create_entity("Мясо", {E.QUANTITY:result}))
+		result_text += "Полученные знания принесли пользу: "
+		if result > 1:
+			result_text += "несколько зайцев\nпопало в ваши ловушки"
+		else:
+			result_text += "заяц попал в\nодну из ваших ловушек"
+	else:
+		result_text += "К сожалению, в этот раз охота не удалась"
+	
+	return result_text
+
+
+
+
