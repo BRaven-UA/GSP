@@ -3,10 +3,11 @@
 extends Node
 
 enum TYPES {BIOLOGICAL, MECHANICAL, DIGITAL, MENTAL} # перечень типов для атрибута TYPE
-enum GROUPS {NOTES, KNOWLEDGE, FOOD} # перечень групп, для объединения разных типов сущностей
+enum GROUPS {NOTES, FOOD, PERK} # перечень групп, для объединения разных типов сущностей
 enum CLASSES {CREATURE, ITEM, ABILITY}
 enum REMAINS {ONLY_NOTEBOOK, NO_FOOD, NO_PETS}
 enum {NAME, CLASS, DESCRIPTION, HEALTH, TYPE, GROUP, CHANGE_HEALTH, CONSUMABLES, CAPACITY, QUANTITY, COST, ACTIVE, KNOWLEDGE, ATTACHMENT} # перечень атрибутов
+const MAX_STUDY: int = 10 # максимальный уровень изучения знания
 const ATTRIBUTES := ["NAME", "CLASS", "DESCRIPTION", "HEALTH", "TYPE", "GROUP", "CHANGE_HEALTH", "CONSUMABLES", "CAPACITY", "QUANTITY", "COST", "ACTIVE", "KNOWLEDGE", "ATTACHMENT"] # не хочу давать имя enum, так как в коде плохо читается
 
 const ENTITIES := [
@@ -33,44 +34,50 @@ const ENTITIES := [
 		{NAME:"Документы из университета", CLASS:CLASSES.ITEM, DESCRIPTION:"Вырезки из местных газет: сообщения об участившихся обращениях жителей в медицинские учреждения с симптомами аллергических реакций, которых раньше не было; репортаж о нападениях диких лис на домашних животных; предупреждение о внеплановых учениях на соседней военной базе; сообщение о внезапной смерти от сердечного приступа заведующего местной медицинской лаборатории.\nСписок посвященных в исследование заразности вируса для животных: коллега из [color=aqua][url=Ветеринарная клиника]соседней ветклиники[/url][/color], лаборант из [color=aqua][url=Дом лаборанта]пригорода[/url][/color], [color=aqua][url=Дом соседа зоолога]сосед[/url][/color], вирусолог из другого [color=aqua][url=Дом ученого]города[/url][/color], ректор университета.\nЧеки на оплату: за приобретенные товары в магазине “Охота и рыбалка”, за транспортные расходы по доставке клеток с животными, за проживание в мотелях, за медицинские лабораторные исследования.\nПриказ ректора о расторжении трудового контракта с этим преподавателем, в связи с грубым нарушением трудовой этики.", GROUP:GROUPS.NOTES},
 
 	{NAME:"Человек", CLASS:CLASSES.CREATURE, DESCRIPTION:"Один из немногих, кто выжил в этом мире", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(100, 100), ATTACHMENT:["Удар"]},
-	{NAME:"Удар", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-5},
-	{NAME:"Собака", CLASS:CLASSES.CREATURE, DESCRIPTION:"Живая собака, друг человека", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(30, 30), COST:10, ATTACHMENT:["Укус"]},
-	{NAME:"Укус", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-10},
-	{NAME:"Хлеб", CLASS:CLASSES.ITEM, DESCRIPTION:"Кусок хлеба", GROUP:GROUPS.FOOD, QUANTITY:1, COST:5, ATTACHMENT:["Съесть хлеб"]},
-	{NAME:"Съесть хлеб", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:5},
-	{NAME:"Мясо", CLASS:CLASSES.ITEM, DESCRIPTION:"Кусок мяса", GROUP:GROUPS.FOOD, QUANTITY:1, COST:10, ATTACHMENT:["Съесть мясо"]},
-	{NAME:"Съесть мясо", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:10},
-	{NAME:"Тушенка", CLASS:CLASSES.ITEM, DESCRIPTION:"Банка тушенки, срок годности не указан", GROUP:GROUPS.FOOD, QUANTITY:1, COST:10, ATTACHMENT:["Съесть тушенку"]},
-	{NAME:"Съесть тушенку", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:10},
-	{NAME:"Нож", CLASS:CLASSES.ITEM, DESCRIPTION:"Обычный бытовой нож", COST:30, ATTACHMENT:["Удар ножом"]},
-	{NAME:"Удар ножом", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-10},
-	{NAME:"Топор", CLASS:CLASSES.ITEM, DESCRIPTION:"Топор дровосека", COST:50, ATTACHMENT:["Удар топором"]},
-	{NAME:"Удар топором", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-20},
-	{NAME:"Бензопила", CLASS:CLASSES.ITEM, DESCRIPTION:"Для работы нужен бензин", CAPACITY:Vector2(0, 1), CONSUMABLES:"Канистра с бензином", COST:150, ATTACHMENT:["Распил бензопилой"]},
-	{NAME:"Распил бензопилой", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
-	{NAME:"Канистра с бензином", CLASS:CLASSES.ITEM, DESCRIPTION:"Используется только для хранения бензина", CAPACITY:Vector2(0, 10), COST:10},
-	{NAME:"Дробовик", CLASS:CLASSES.ITEM, DESCRIPTION:"Грозное оружие на небольших дистанциях", CAPACITY:Vector2(0, 6), CONSUMABLES:"Патрон для дробовика", COST:250, ATTACHMENT:["Выстрел из дробовика"]},
-	{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
-	{NAME:"Патрон для дробовика", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит только к дробовикам", QUANTITY:1, COST:5},
-	{NAME:"Пистолет", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет одиночными выстрелами", CAPACITY:Vector2(0, 9), CONSUMABLES:"Патрон 9 мм", COST:150, ATTACHMENT:["Выстрел из пистолета"]},
-	{NAME:"Выстрел из пистолета", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-30},
-	{NAME:"Патрон 9 мм", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для пистолетов и пистолетов-пулеметов", QUANTITY:1, COST:5},
-	{NAME:"Охотничья винтовка", CLASS:CLASSES.ITEM, DESCRIPTION:"Двухзарядная охотничья винтовка", CAPACITY:Vector2(0, 2), CONSUMABLES:"Патрон 7.62 мм", COST:190, ATTACHMENT:["Выстрел из винтовки"]},
-	{NAME:"Выстрел из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-40},
-	{NAME:"Патрон 7.62 мм", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для винтовок", QUANTITY:1, COST:5},
-	{NAME:"Автоматическая винтовка", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет очередью", CAPACITY:Vector2(0, 10), CONSUMABLES:"Патрон 5.56 мм (х3)", COST:320, ATTACHMENT:["Очередь из винтовки"]},
-	{NAME:"Очередь из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-90},
-	{NAME:"Патрон 5.56 мм (х3)", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для автоматических винтовок", QUANTITY:1, COST:15},
-	{NAME:"Радиоприемник", CLASS:CLASSES.ITEM, DESCRIPTION:"В активированном состоянии позволяет слушать радиоэфир", CAPACITY:Vector2(0, 10), CONSUMABLES:"Аккумулятор", COST:60, ACTIVE:false, ATTACHMENT:["Прослушка радиоэфира"]},
-	{NAME:"Прослушка радиоэфира", CLASS:CLASSES.ABILITY},
-	{NAME:"Аккумулятор", CLASS:CLASSES.ITEM, DESCRIPTION:"Хранит электроэнергию. Можно заряжать", CAPACITY:Vector2(0, 100), COST:50},
-	{NAME:"Текст радиосигнала", CLASS:CLASSES.ITEM, DESCRIPTION:"Семья не может открыть входной люк в персональном подземном бункере"},
-	{NAME:"Динамит", CLASS:CLASSES.ITEM, DESCRIPTION:"Обладает большой разрушительной силой", QUANTITY:1, COST:300, ATTACHMENT:["Взрыв динамита"]},
-	{NAME:"Взрыв динамита", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-300},
-	{NAME:"Учебник по зоологии", CLASS:CLASSES.ITEM, DESCRIPTION:"Зоология изучает животных, их строение, поведение, эволюцию, а также их взаимодействие с окружающей средой", GROUP:GROUPS.KNOWLEDGE, CAPACITY:Vector2(10, 10), COST:100, ACTIVE:false, KNOWLEDGE:"Зоолог"}]
+		{NAME:"Удар", CLASS:CLASSES.ABILITY, DESCRIPTION:"Способность наносить удары противнику в рукопашном бою", CHANGE_HEALTH:-5},
+		{NAME:"Собака", CLASS:CLASSES.CREATURE, DESCRIPTION:"Живая собака, друг человека", TYPE:TYPES.BIOLOGICAL, HEALTH:Vector2(30, 30), COST:10, ATTACHMENT:["Укус"]},
+		{NAME:"Укус", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-10},
+		{NAME:"Хлеб", CLASS:CLASSES.ITEM, DESCRIPTION:"Кусок хлеба", GROUP:GROUPS.FOOD, QUANTITY:1, COST:5, ATTACHMENT:["Съесть хлеб"]},
+		{NAME:"Съесть хлеб", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:5},
+		{NAME:"Мясо", CLASS:CLASSES.ITEM, DESCRIPTION:"Кусок мяса", GROUP:GROUPS.FOOD, QUANTITY:1, COST:10, ATTACHMENT:["Съесть мясо"]},
+		{NAME:"Съесть мясо", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:10},
+		{NAME:"Тушенка", CLASS:CLASSES.ITEM, DESCRIPTION:"Банка тушенки, срок годности не указан", GROUP:GROUPS.FOOD, QUANTITY:1, COST:10, ATTACHMENT:["Съесть тушенку"]},
+		{NAME:"Съесть тушенку", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:10},
+		{NAME:"Нож", CLASS:CLASSES.ITEM, DESCRIPTION:"Обычный бытовой нож", COST:30, ATTACHMENT:["Удар ножом"]},
+		{NAME:"Удар ножом", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-10},
+		{NAME:"Топор", CLASS:CLASSES.ITEM, DESCRIPTION:"Топор дровосека", COST:50, ATTACHMENT:["Удар топором"]},
+		{NAME:"Удар топором", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-20},
+		{NAME:"Бензопила", CLASS:CLASSES.ITEM, DESCRIPTION:"Для работы нужен бензин", CAPACITY:Vector2(0, 1), CONSUMABLES:"Канистра с бензином", COST:150, ATTACHMENT:["Распил бензопилой"]},
+		{NAME:"Распил бензопилой", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
+		{NAME:"Канистра с бензином", CLASS:CLASSES.ITEM, DESCRIPTION:"Используется только для хранения бензина", CAPACITY:Vector2(0, 10), COST:10},
+		{NAME:"Дробовик", CLASS:CLASSES.ITEM, DESCRIPTION:"Грозное оружие на небольших дистанциях", CAPACITY:Vector2(0, 6), CONSUMABLES:"Патрон для дробовика", COST:250, ATTACHMENT:["Выстрел из дробовика"]},
+		{NAME:"Выстрел из дробовика", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-50},
+		{NAME:"Патрон для дробовика", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит только к дробовикам", QUANTITY:1, COST:5},
+		{NAME:"Пистолет", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет одиночными выстрелами", CAPACITY:Vector2(0, 9), CONSUMABLES:"Патрон 9 мм", COST:150, ATTACHMENT:["Выстрел из пистолета"]},
+		{NAME:"Выстрел из пистолета", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-30},
+		{NAME:"Патрон 9 мм", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для пистолетов и пистолетов-пулеметов", QUANTITY:1, COST:5},
+		{NAME:"Охотничья винтовка", CLASS:CLASSES.ITEM, DESCRIPTION:"Двухзарядная охотничья винтовка", CAPACITY:Vector2(0, 2), CONSUMABLES:"Патрон 7.62 мм", COST:190, ATTACHMENT:["Выстрел из винтовки"]},
+		{NAME:"Выстрел из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-40},
+		{NAME:"Патрон 7.62 мм", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для винтовок", QUANTITY:1, COST:5},
+		{NAME:"Автоматическая винтовка", CLASS:CLASSES.ITEM, DESCRIPTION:"Стреляет очередью", CAPACITY:Vector2(0, 10), CONSUMABLES:"Патрон 5.56 мм (х3)", COST:320, ATTACHMENT:["Очередь из винтовки"]},
+		{NAME:"Очередь из винтовки", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-90},
+		{NAME:"Патрон 5.56 мм (х3)", CLASS:CLASSES.ITEM, DESCRIPTION:"Подходит для автоматических винтовок", QUANTITY:1, COST:15},
+		{NAME:"Радиоприемник", CLASS:CLASSES.ITEM, DESCRIPTION:"В активированном состоянии позволяет слушать радиоэфир", CAPACITY:Vector2(0, 10), CONSUMABLES:"Аккумулятор", COST:60, ACTIVE:false, ATTACHMENT:["Прослушка радиоэфира"]},
+		{NAME:"Прослушка радиоэфира", CLASS:CLASSES.ABILITY, DESCRIPTION:"Возможность прослушивать радиоэфир на разных частотах"},
+		{NAME:"Аккумулятор", CLASS:CLASSES.ITEM, DESCRIPTION:"Хранит электроэнергию. Можно заряжать", CAPACITY:Vector2(0, 100), COST:50},
+		{NAME:"Текст радиосигнала", CLASS:CLASSES.ITEM, DESCRIPTION:"Семья не может открыть входной люк в персональном подземном бункере"},
+		{NAME:"Динамит", CLASS:CLASSES.ITEM, DESCRIPTION:"Обладает большой разрушительной силой", QUANTITY:1, COST:300, ATTACHMENT:["Взрыв динамита"]},
+		{NAME:"Взрыв динамита", CLASS:CLASSES.ABILITY, CHANGE_HEALTH:-300},
+	
+	{NAME:"Новая способность", CLASS:CLASSES.ABILITY}, # заглушка для выбора перка
+		{NAME:"Учебник по зоологии", CLASS:CLASSES.ITEM, DESCRIPTION:"Зоология изучает животных, их строение, поведение, эволюцию, а также их взаимодействие с окружающей средой", COST:100, ACTIVE:false, KNOWLEDGE:"Зоолог"},
+		{NAME:"Зоркость", CLASS:CLASSES.ABILITY, DESCRIPTION:"Дает больше информации об окружающем мире", GROUP:GROUPS.PERK},
+		{NAME:"Широкий кругозор", CLASS:CLASSES.ABILITY, DESCRIPTION:"Увеличивает на 1 количество событий для выбора", GROUP:GROUPS.PERK},
+		{NAME:"Зоолог", CLASS:CLASSES.ABILITY, DESCRIPTION:"Дает преимущества при взаимодействии с животными", GROUP:GROUPS.PERK}]
 
 var player: GameEntity # ссылка на сущность игрока
 var notebook: GameEntity # ссылка на записную книжку
+var _study: Dictionary # данные о проегрессе в изучении навыков
 
 signal player_entities_changed
 signal notebook_updated # эмитируется из player entity
@@ -129,6 +136,7 @@ func create_person(possible_weapons := [], health := 0) -> GameEntity: # соз�
 	return person
 
 func _on_new_character(entity: GameEntity):
+	_study.clear()
 	player = entity
 	player.set_attribute(E.NAME, "Игрок")
 	_on_entity_changed(entity) # для обновления интерфейса под нового персонажа
@@ -158,6 +166,40 @@ func duel(defender: GameEntity, attacker: GameEntity = player): # нападаю
 
 		current = current^1 # меняем атакующего
 	assert(true, "Количество обменов ударами в дуэли превысило допустимое значение!")
+
+func study(knowledge: String, amount := MAX_STUDY) -> bool: # получение определенного количества знания, возвращает флаг успешного изучения
+	if amount:
+		var current_progress = get_study_progress(knowledge) + amount
+		_study[knowledge] = current_progress
+		Logger.info("Изучение %s (%d/%d)" % [knowledge, current_progress, MAX_STUDY], Logger.INGAME_EXP)
+		if current_progress >= MAX_STUDY: # способность изучена
+			player.add_entity(create_entity(knowledge), true)
+			return true
+		emit_signal("player_entities_changed", player.get_entities()) # для корректного отображения GUI
+	return false
+
+func current_study() -> GameEntity: # возвращает текущую изучаемую сущность
+	for entity in player.get_entities(false, true):
+		if entity.get_attribute(KNOWLEDGE):
+			return entity
+	return null
+
+func get_study_progress(knowledge: String) -> int:
+	return _study.get(knowledge, 0)
+
+func get_perks_to_select() -> Array: # возвращает массив перков для выбора игроком
+	var result := []
+	
+	for entity_data in ENTITIES:
+		if entity_data.get(GROUP) == GROUPS.PERK:
+			if player.find_entity(E.NAME, entity_data[NAME], true) == null: # нет среди активных
+				result.append(entity_data)
+	
+	result.shuffle() # перемешиваем
+	if result.size() > 3: # обрезаем до максимум трех на выбор
+		result.resize(3)
+	
+	return result
 
 func player_remains(keys:Array) -> Array: # определяет состав останков игрока исходя из переданных ключей
 	if REMAINS.ONLY_NOTEBOOK in keys:

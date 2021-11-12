@@ -63,15 +63,29 @@ func _on_item_rmb_selected(index: int, position: Vector2) -> void: # форми�
 	
 	var activable = entity.get_attribute(E.ACTIVE)
 	if activable != null:
+		var disabled := false
 		var turn_on_text = "Активировать"
+		
 		if not capacity.x:
-			turn_on_text += " (изучено)" if entity.get_attribute(E.KNOWLEDGE) else " (нужна зарядка)"
+			turn_on_text += " (нужна зарядка)"
+			disabled = true
+		
+		var knowledge = entity.get_attribute(E.KNOWLEDGE)
+		if knowledge:
+			turn_on_text = "Начать изучение %s" % knowledge
+			disabled = true
+			if E.player.find_entity(E.NAME, knowledge, true):
+				turn_on_text += " (изучено)"
+			elif E.current_study():
+				turn_on_text += " (идет изучение)"
+			else:
+				disabled = false
 		
 		var menu_index = _menu.get_item_count() # индекс для нового пункта
 		_menu.add_item("Деактивировать" if activable else turn_on_text, MENU_ITEMS.SWITCH)
-		_menu.set_item_disabled(menu_index, not bool(capacity.x))
+		_menu.set_item_disabled(menu_index, disabled and not activable) # всегда доступно для отключения
 	
-	if quantity or capacity:
+	if quantity or capacity.x:
 		var change_health = entity.get_attribute(E.CHANGE_HEALTH, false, 0)
 		if change_health > 0: # если сущность может восстанавливать здоровье
 			var restore_menu = _init_submenu("RestoreMenu")

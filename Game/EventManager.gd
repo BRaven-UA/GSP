@@ -7,12 +7,15 @@ var _tracked_events := [] # список событий, для которых �
 var _last_event: GameEvent # ссылка на последнее игровое событие
 
 signal new_events # Новые события доступны для выбора
+signal tracking_changed # для обновления GUI
 
 func _ready() -> void:
 	# создаем экземпляры всех возможных событий
 	for name in Resources.get_resource_list():
 		if name.begins_with("GameEvent"):
 			_events.append(Resources.get_resource(name).new())
+	
+	Game.connect("new_character", self, "_on_new_character")
 
 func get_event(name: String) -> GameEvent: # поиск события по имени
 	for event in _events:
@@ -36,7 +39,7 @@ func update_events(): # формирует новый список событи�
 	
 	events_pool.shuffle() # меняем порядок на случайный
 	
-	var event_quantity := 3 + int(Game.has_perk("Широкий кругозор")) # количество собыйти для выбора
+	var event_quantity := 3 + int(E.player.find_entity(E.NAME, "Широкий кругозор", true) != null) # количество собыйти для выбора
 	for i in event_quantity:
 		var cut_off = randf() * total_probability # отсечка на шкале суммарной вероятности
 		var accumulated_probability := 0.0 # накопительная вероятность перебранных событий
@@ -76,6 +79,7 @@ func toggle_tracking(event: GameEvent):
 		untrack_event(event)
 	else:
 		track_event(event)
+	emit_signal("tracking_changed", _tracked_events)
 
 func set_current_event(event_data: Dictionary): # получены данные о текущем событии
 	Game.state = Game.STATE_EVENT
@@ -92,3 +96,6 @@ func get_new_character_data() -> Dictionary: # возвращает данные
 	if _last_event:
 		return _last_event.new_character_data
 	return {}
+
+func _on_new_character(entity: GameEntity):
+	_tracked_events.clear()

@@ -19,7 +19,7 @@ signal action_pressed # пользователь выбрал действие
 
 func _ready() -> void:
 	_button.connect("pressed", self, "_on_pressed") # дублируем сигнал с кнопки
-	Game.connect("perks_changed", self, "_on_perks_changed")
+	EventManager.connect("tracking_changed", self, "_on_tracking_changed") # на случай изменений уже после формирования по данным события
 
 func init(data: Dictionary) -> void: # формирование окна события для выбора из списка других событий
 	event_data = data
@@ -32,6 +32,7 @@ func init(data: Dictionary) -> void: # формирование окна соб�
 			_tracker.text += "\n"
 		_tracker.text += tracking_data.Text
 		_tracker.visible = true
+	
 
 func show_actions(setup := false) -> void: # формирование списка возможных действий для события
 	var event = event_data.Event
@@ -42,6 +43,7 @@ func show_actions(setup := false) -> void: # формирование списк
 	_caption.text = event.name
 	_description.text = event.description
 	_bonus_info.text = event.bonus_info
+	_bonus_info.visible = E.player.find_entity(E.NAME, "Зоркость", true) != null
 	_separator.visible = false
 	_tracker.visible = false
 	_button.mouse_filter = Control.MOUSE_FILTER_IGNORE # чтобы нельзя было триггерить кнопку
@@ -87,12 +89,12 @@ func _get_button() -> Button: # ищет в пуле незанятую кноп
 	_action_buttons.append(button)
 	return button
 
+func _on_tracking_changed(events: Array):
+	_tracker.visible = not events.empty()
+
 func _on_pressed(): # нажатие на дочернюю кнопку, обозначающее выбор этого события
 	emit_signal("pressed")
 
 func _on_action_button_pressed(button: MarginContainer) -> void: # вызывается при нажатии на любую кнопку действия
 	emit_signal("action_pressed", event_data, _action_buttons.find(button)) # для EventList
 #	event_data.apply_action(_action_buttons.find(button))
-
-func _on_perks_changed(active_perks: Array):
-	_bonus_info.visible = Game.has_perk("Зоркость")

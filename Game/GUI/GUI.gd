@@ -12,8 +12,9 @@ onready var _entity_list: ItemList = _root.find_node("EntityList")
 onready var _notes: RichTextLabel = _root.find_node("Notes")
 onready var _center_container: CenterContainer = _root.find_node("CenterContainer")
 onready var _health_bar: ProgressBar = _root.find_node("HealthBar")
-onready var _health_bar_label: Label = _health_bar.get_node("Label")
+onready var _health_bar_label: Label = _health_bar.get_node("HealthValue")
 onready var _exp_bar: ProgressBar = _root.find_node("ExpBar")
+onready var _countdown: Label = _root.find_node("Countdown")
 onready var _timer: Timer = _root.get_node("Timer")
 
 signal results_confirmed # сообщает что пользователь закрыл окно с результатами события
@@ -24,6 +25,7 @@ func _ready() -> void:
 	E.connect("notebook_updated", self, "_on_notebook_updated")
 	Game.connect("exp_changed", self, "_on_exp_changed")
 	Game.connect("new_character", self, "_on_new_character")
+	Game.connect("countdown", self, "_on_countdown")
 	_notes.connect("meta_clicked", self, "_on_meta_clicked")
 	_notes.connect("meta_hover_started", self, "_on_meta_hover")
 	_continue.connect("pressed", Game, "new_character")
@@ -83,6 +85,9 @@ func _on_player_entities_changed(entities: Array): # для обновления
 
 func _on_new_character(entity: GameEntity):
 	_continue.visible = false
+
+func _on_countdown(turns: int):
+	_countdown.text = str(turns)
 
 func _on_exp_changed(value: int):
 # warning-ignore:integer_division

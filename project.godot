@@ -58,7 +58,7 @@ window/energy_saving/keep_screen_on=false
 
 [editor]
 
-search_in_file_extensions=PoolStringArray( "gd" )
+search_in_file_extensions=PoolStringArray( "gd", "tscn" )
 
 [editor_plugins]
 
@@ -68,7 +68,7 @@ enabled=PoolStringArray( "res://addons/script-state-keeper/plugin.cfg" )
 
 theme/custom="res://Game/GUI/Theme/GUI_Theme.tres"
 theme/custom_font="res://Game/GUI/Theme/Regular_Font.tres"
-timers/tooltip_delay_sec=2.0
+timers/tooltip_delay_sec=1.0
 
 [input]
 

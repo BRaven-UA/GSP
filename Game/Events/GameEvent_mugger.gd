@@ -5,11 +5,13 @@ var mugger: GameEntity
 func _init() -> void:
 	name = "Грабитель"
 	description = "Этот тип собирается забрать ваше имущество, не считаясь с вашим мнением"
-	new_character_data = {"Text":"А этот тип оказался не из пугливых, не захотел\nдобровольно расставаться со своим барахлом.\nПришлось с ним повозиться", "Heir":mugger, "Remains":[E.REMAINS.NO_PETS]}
+	new_character_data = {"Text":"А этот тип оказался не из пугливых, не захотел\nдобровольно расставаться со своим барахлом.\nПришлось с ним повозиться", "Remains":[E.REMAINS.NO_PETS]}
 
 func setup():
+	bonus_info = ""
 	mugger = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
 	_target_bonus_info(mugger)
+	new_character_data.Heir = mugger
 
 func _define_actions():
 	_add_hostile_actions(mugger)

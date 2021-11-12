@@ -3,33 +3,26 @@
 extends Node
 
 enum {STATE_IDLE, STATE_EVENT, STATE_TRADE} # игровые состояния
-enum {PERK_NAME, PERK_DESCRIPTION}
-const PERKS := [
-	{PERK_NAME:"Зоркость", PERK_DESCRIPTION:"Дает больше информации об окружающем мире"},
-	{PERK_NAME:"Широкий кругозор", PERK_DESCRIPTION:"Увеличивает на 1 количество событий для выбора"},
-	{PERK_NAME:"Зоолог", PERK_DESCRIPTION:"Дает преимущества при взаимодействии с животными"}]
 
-var _experience : int # накопленный игровой опыт (не зависит от сущности игрока)
-var _active_perks := [] # список активных перков (уникальных способностей) текущей сущности игрока
-var perk_points := 0 # количество доступных перков
+var _experience : int # накопленный игровой опыт
 var _fail := false # флаг завершения текущей попытки
 var state: int # текущее состояние игры
+var turn: int # текущий ход
+var _max_turns: int # максимальное количество ходов до завершения симуляции
 
-signal new_character # Игра за нового персонажа
-signal perks_changed # состав активных перков изменился
 signal exp_changed # изменился игровой опыт
-
+signal new_character # Игра за нового персонажа
+signal countdown
 
 func _ready():
 	randomize()
+	_max_turns = 200 + randi() % 101
 	
 	GUI.connect("results_confirmed", self, "_on_GUI_results")
 	GUI.connect("trade_complete", self, "_on_GUI_trade")
 
 func new_character(): # создание нового персонажа или игра за существующего
 	_fail = false
-	_active_perks = []
-	emit_signal("perks_changed", _active_perks)
 	_experience = 0
 	emit_signal("exp_changed", _experience) # для первичного заполнения индикатора опыта
 
@@ -38,14 +31,18 @@ func new_character(): # создание нового персонажа или 
 		new_character_data = EventManager.get_new_character_data()
 	state = STATE_IDLE
 	
-	var character: GameEntity = new_character_data.get("Entity")
+	var turns_passed = 1
+	var character: GameEntity = new_character_data.get("Heir")
 	if not character: # если персонажа еще нет в игре, создаем нового
+		if turn: # для самого первого персонажа ничего не ищем
+			turns_passed = 10 + randi() % 21 # время для поиска останков предыдущего персонажа
 		character = E.create_entity("Человек", {E.HEALTH:Vector2(80 + randi() % 21, 100)})
 		if OS.is_debug_build():
-			character.add_entity(E.create_entity("Учебник по зоологии"))
+			pass
 		var random_entity = E.randw([{"Ничего":1}, {"Собака":0.2}, {"Хлеб":0.5}, {"Нож":0.1}])
 		if random_entity != "Ничего":
 			character.add_entity(E.create_entity(random_entity), false, false, true)
+	add_turns(turns_passed)
 	
 	# если это первый персонаж, создаем записную книгу, иначе передаем останки предыдущего персонажа
 	var remains = E.player_remains(new_character_data.get("Remains", [E.REMAINS.ONLY_NOTEBOOK]))
@@ -63,14 +60,14 @@ func new_character(): # создание нового персонажа или 
 func increase_exp(value: int): # увеличивает накопленный опыт на указанную величину
 	if not _fail: # события, приведшие к смерти, не увеличивают опыт
 		Logger.info("Получено %d опыта" % value, Logger.INGAME_EXP)
+		Logger.tip(Logger.TIP_EXPERIENCE)
 		
 		var prev_exp = _experience
 		_experience += value
 # warning-ignore:integer_division
 		if prev_exp / 100 != _experience / 100:
 			Logger.info("Получен новый уровень!", Logger.INGAME_EXP)
-			perk_points += 1
-			emit_signal("perks_changed", _active_perks) # для обновления списка перков и появления опции выбора новго перка
+			E.player.add_entity(E.create_entity("Новая способность"))
 		
 		emit_signal("exp_changed", _experience)
 
@@ -89,49 +86,32 @@ func time_effects(): # потребление различных ресурсо�
 		
 		if entity.get_attribute(E.ACTIVE):
 			entity.change_attribute(E.CAPACITY) # потребление расходников активных сущностей
+			
+	var entity = E.current_study()
+	if entity:
+		var studied = E.study(entity.get_attribute(E.KNOWLEDGE), 1) # увеличиваем прогресс изучения
+		if studied:
+			E.player.deactivate_entity(entity) # если знание получено, деактивируем источник
 	
+	add_turns(1)
 	Logger.tip(Logger.TIP_TIME)
 	state = STATE_IDLE
 	_next_step()
+
+func add_turns(amount: int): # увеличивает счетчик ходов
+	if amount:
+		turn += amount
+		if turn > _max_turns:
+			shut_down()
+		emit_signal("countdown", E.clamp_int(_max_turns - turn, 0, _max_turns))
 
 func fail():
 	Logger.info("Текущий персонаж умер!", Logger.INGAME_DAMAGE)
 	Logger.tip(Logger.TIP_DEATH)
 	_fail = true
 
-func add_perk(name: String):
-	for perk in PERKS:
-		if perk[PERK_NAME] == name:
-			_active_perks.append(perk)
-			perk_points -= 1
-			Logger.info("Изучена способность %s" % name, Logger.INGAME_EXP)
-			emit_signal("perks_changed", _active_perks)
-			return
-
-func remove_perk(name: String):
-	for perk in _active_perks:
-		if perk[PERK_NAME] == name:
-			_active_perks.erase(perk)
-			perk_points += 1
-			emit_signal("perks_changed", _active_perks)
-			return
-
-func has_perk(name: String) -> bool:
-	for perk in _active_perks:
-		if perk[PERK_NAME] == name:
-			return true
-	return false
-
-func get_perks_to_select(): # возвращает массив перков для выбора игроком
-	var result := PERKS.duplicate() # все возможные перки
-	
-	for perk in _active_perks: # убираем уже выбранные
-		result.erase(perk)
-	result.shuffle() # перемешиваем
-	if result.size() > 3: # обрезаем до максимум трех на выбор
-		result.resize(3)
-	
-	return result
+func shut_down(): # конец симуляции
+	get_tree().quit()
 
 func _on_GUI_results():
 	_next_step()

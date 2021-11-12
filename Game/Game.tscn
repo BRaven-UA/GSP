@@ -8,7 +8,7 @@
 [ext_resource path="res://Game/GUI/TradePanel.gd" type="Script" id=6]
 [ext_resource path="res://Game/GUI/Theme/Exp_Stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://Game/GUI/Log.gd" type="Script" id=8]
-[ext_resource path="res://Game/GUI/PerkList.gd" type="Script" id=9]
+[ext_resource path="res://Game/GUI/AbilityList.gd" type="Script" id=9]
 
 [node name="MainControl" type="Control"]
 anchor_right = 1.0
@@ -25,11 +25,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EntityList" type="ItemList" parent="MainContainer"]
-margin_right = 270.0
+[node name="VBoxContainer2" type="VBoxContainer" parent="MainContainer"]
+margin_right = 300.0
 margin_bottom = 650.0
+rect_min_size = Vector2( 300, 0 )
+mouse_filter = 2
+custom_constants/separation = 2
+
+[node name="EntityList" type="ItemList" parent="MainContainer/VBoxContainer2"]
+margin_right = 300.0
+margin_bottom = 583.0
 rect_min_size = Vector2( 270, 0 )
 focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
 allow_reselect = true
 allow_rmb_select = true
 script = ExtResource( 3 )
@@ -37,12 +47,37 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PopupMenu" type="PopupMenu" parent="MainContainer/EntityList"]
+[node name="PopupMenu" type="PopupMenu" parent="MainContainer/VBoxContainer2/EntityList"]
 margin_right = 10.0
 margin_bottom = 10.0
 
+[node name="AbilityList" type="ItemList" parent="MainContainer/VBoxContainer2"]
+margin_top = 585.0
+margin_right = 300.0
+margin_bottom = 650.0
+rect_min_size = Vector2( 220, 0 )
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
+allow_reselect = true
+auto_height = true
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PopupMenu" type="PopupMenu" parent="MainContainer/VBoxContainer2/AbilityList"]
+anchor_left = 1.0
+anchor_right = 1.0
+custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
-margin_left = 272.0
+margin_left = 302.0
 margin_right = 798.0
 margin_bottom = 650.0
 mouse_filter = 2
@@ -55,7 +90,7 @@ __meta__ = {
 
 [node name="Notes" type="RichTextLabel" parent="MainContainer/VBoxContainer"]
 visible = false
-margin_right = 526.0
+margin_right = 496.0
 margin_bottom = 296.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -66,7 +101,7 @@ text = "	"
 scroll_following = true
 
 [node name="CenterContainer" type="CenterContainer" parent="MainContainer/VBoxContainer"]
-margin_right = 526.0
+margin_right = 496.0
 margin_bottom = 597.0
 mouse_filter = 2
 size_flags_horizontal = 3
@@ -74,9 +109,9 @@ size_flags_vertical = 3
 
 [node name="EventList" type="MarginContainer" parent="MainContainer/VBoxContainer/CenterContainer"]
 visible = false
-margin_left = 257.0
+margin_left = 242.0
 margin_top = 292.0
-margin_right = 269.0
+margin_right = 254.0
 margin_bottom = 304.0
 grow_horizontal = 2
 size_flags_horizontal = 5
@@ -113,9 +148,9 @@ columns = 2
 
 [node name="Continue" type="Button" parent="MainContainer/VBoxContainer/CenterContainer"]
 visible = false
-margin_left = 198.0
+margin_left = 183.0
 margin_top = 285.0
-margin_right = 328.0
+margin_right = 313.0
 margin_bottom = 311.0
 rect_min_size = Vector2( 130, 0 )
 focus_mode = 0
@@ -125,34 +160,10 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="PerkList" type="ItemList" parent="MainContainer/VBoxContainer"]
-visible = false
-margin_top = 587.0
-margin_right = 200.0
-margin_bottom = 597.0
-rect_min_size = Vector2( 220, 0 )
-focus_mode = 0
-size_flags_horizontal = 0
-custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
-allow_reselect = true
-auto_height = true
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="PopupMenu" type="PopupMenu" parent="MainContainer/VBoxContainer/PerkList"]
-anchor_left = 1.0
-anchor_right = 1.0
-custom_colors/font_color = Color( 0.376471, 0.823529, 0.360784, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="HealthBar" type="ProgressBar" parent="MainContainer/VBoxContainer"]
-margin_left = 163.0
+margin_left = 148.0
 margin_top = 602.0
-margin_right = 363.0
+margin_right = 348.0
 margin_bottom = 628.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -166,7 +177,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="MainContainer/VBoxContainer/HealthBar"]
+[node name="HealthValue" type="Label" parent="MainContainer/VBoxContainer/HealthBar"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -189,7 +200,7 @@ __meta__ = {
 
 [node name="ExpBar" type="ProgressBar" parent="MainContainer/VBoxContainer"]
 margin_top = 633.0
-margin_right = 526.0
+margin_right = 496.0
 margin_bottom = 645.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -202,13 +213,29 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Countdown" type="Label" parent="MainContainer/VBoxContainer/ExpBar"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -10.0
+margin_top = -23.0
+margin_bottom = -5.0
+grow_horizontal = 0
+grow_vertical = 0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+align = 2
+max_lines_visible = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Dummy" type="Control" parent="MainContainer/VBoxContainer"]
 margin_top = 650.0
-margin_right = 526.0
+margin_right = 496.0
 margin_bottom = 650.0
 mouse_filter = 2
 
 [node name="Log" type="RichTextLabel" parent="MainContainer"]
+show_behind_parent = true
 margin_left = 800.0
 margin_right = 1100.0
 margin_bottom = 650.0

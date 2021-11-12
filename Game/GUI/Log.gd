@@ -31,12 +31,12 @@ func _on_new_log_record(record: Dictionary): # обновляется по си�
 			pop()
 			pop()
 		else:
-			_log_print(record.Text, record.Category, record.Time)
+			_log_print(record.Text, record.Category, record.Turn)
 
-func _log_print(text: String, category: int = Logger.INGAME, time := ""): # выводит текст в лог
-	if time:
+func _log_print(text: String, category: int = Logger.INGAME, turn := 0): # выводит текст в лог
+	if turn:
 		push_color(Color.webgray)
-		add_text("[%s] " % time)
+		add_text("[Ход %d] " % turn)
 		pop()
 	
 	push_color(Color(COLORS[category]))

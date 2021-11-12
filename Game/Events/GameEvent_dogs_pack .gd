@@ -8,6 +8,8 @@ func _init() -> void:
 	probability = 0.5
 
 func setup():
+	bonus_info = ""
+	
 	var pack_leader_data = E.get_base_entity("Собака")
 	pack_leader_data[E.HEALTH] *= Vector2(1.5, 1.5) # здоровее на 50%
 	pack_leader = E.create_entity(pack_leader_data)
@@ -18,7 +20,7 @@ func setup():
 func _define_actions():
 	_add_hostile_actions(pack_leader, "Атаковать вожака")
 	
-	if Game.has_perk("Зоолог"):
+	if E.player.find_entity(E.NAME, "Зоолог", true):
 		_add_action("Показать силу", "_dominate")
 	
 	for entity in E.player.get_entities():

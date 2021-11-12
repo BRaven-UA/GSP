@@ -17,7 +17,7 @@ func _define_actions():
 	if dog:
 		_add_action("Послать вперед собаку", "_send_scout", [dog])
 	
-	if Game.has_perk("Зоолог"):
+	if E.player.find_entity(E.NAME, "Зоолог", true):
 		_add_action("Охотиться", "_hunt")
 
 func _go_along() -> String:

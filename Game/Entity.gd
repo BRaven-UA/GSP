@@ -77,11 +77,7 @@ func set_attribute(name: int, new_value, directly := true) -> int: # и возв
 				if new_value.x < 1: # кончились заряды
 					owner.deactivate_entity(self)
 					if _attributes.has(E.ACTIVE):
-						if _attributes.has(E.KNOWLEDGE):
-							Game.add_perk(_attributes[E.KNOWLEDGE])
-							info += " (изучено)"
-						else:
-							info += " (деактивировано)"
+						info += " (деактивировано)"
 					Logger.debug("Кончились заряды у {%s}" % get_text())
 				Logger.info(info)
 			
@@ -138,15 +134,15 @@ func add_entity(entity: GameEntity, activate := false, merge := true, silent := 
 	
 	if self == E.player:
 		Logger.info("Добавлено: " + entity.get_text(), Logger.INGAME_TAKE)
-		var group = entity.get_attribute(E.GROUP)
-		match group:
-			E.GROUPS.NOTES:
-				E.notebook.add_entity(entity) # записки сразу добавляем в записную книжку
-				E.emit_signal("notebook_updated", entity)
-				Logger.tip(Logger.TIP_NOTE)
-				return
-			E.GROUPS.KNOWLEDGE:
-				Logger.tip(Logger.TIP_STUDY)
+		
+		if entity.get_attribute(E.GROUP) == E.GROUPS.NOTES:
+			E.notebook.add_entity(entity) # записки сразу добавляем в записную книжку
+			E.emit_signal("notebook_updated", entity)
+			Logger.tip(Logger.TIP_NOTE)
+			return
+		
+		if entity.get_attribute(E.KNOWLEDGE):
+			Logger.tip(Logger.TIP_STUDY)
 	
 	var merged = merge_entity(entity) if merge else null # объединение сущностей (если нужно)
 	if merged:
@@ -234,6 +230,11 @@ func get_text() -> String: # возвращает сокращенное тек�
 	var quantity = get_attribute(E.QUANTITY)
 	if quantity: # [кол. использований]
 		text += " [%d]" % quantity
+	
+	var knowledge = get_attribute(E.KNOWLEDGE)
+	if knowledge: # прогресс изучения (тек./макс.)
+		var progress = E.get_study_progress(knowledge)
+		text += " (%d/%d)" % [progress, E.MAX_STUDY] if progress < E.MAX_STUDY else " (изучено)"
 	
 	return text
 

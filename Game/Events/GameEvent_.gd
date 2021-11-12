@@ -31,6 +31,7 @@ func setup():
 	bonus_info = ""
 	entity = E.create_person([{"Нож":1}, {"Топор":0.75}, {"Пистолет":0.5}, {"Охотничья винтовка":0.25}])
 	_target_bonus_info(entity)
+	new_character_data.Heir = entity
 
 func _define_actions():
 	_add_hostile_actions(entity)

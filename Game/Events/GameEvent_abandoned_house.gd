@@ -8,7 +8,7 @@ func _init() -> void:
 	name = "Заброшенный дом"
 	description = "Двухэтажный жилой дом выглядит заброшенным: газон давно не стригли, где-то выбито оконное стекло, входная дверь слегка приоткрыта"
 	probability = 0.33
-	new_character_data = {"Text":"Незваный гость заявился ко мне в дом. Отпускать\nего живьем было бы большой ошибкой: кто знает кого\nон приведет с собой в следующий раз. Вещички его\nтоже не будут лишними", "Heir":occupant, "Remains":[E.REMAINS.NO_PETS]}
+	new_character_data = {"Text":"Незваный гость заявился ко мне в дом. Отпускать\nего живьем было бы большой ошибкой: кто знает кого\nон приведет с собой в следующий раз. Вещички его\nтоже не будут лишними", "Remains":[E.REMAINS.NO_PETS]}
 
 func setup():
 	bonus_info = ""
@@ -28,6 +28,7 @@ func setup():
 		_target_bonus_info(occupant)
 	else:
 		occupant = null
+	new_character_data.Heir = occupant
 
 func _define_actions():
 	_add_action("Пройти мимо", "_pass_by")

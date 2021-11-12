@@ -8,6 +8,7 @@ func _init() -> void:
 	probability = 0.33
 
 func setup():
+	bonus_info = ""
 	dog = E.create_entity("Собака", {E.HEALTH:Vector2(10 + randi() % 11, 30)}) # голодная собака
 	_target_bonus_info(dog)
 
@@ -15,7 +16,7 @@ func _define_actions():
 	_add_action("Пройти мимо", "_pass_by")
 	_add_hostile_actions(dog)
 	
-	if Game.has_perk("Зоолог"):
+	if E.player.find_entity(E.NAME, "Зоолог", true):
 		_add_action("Приручить", "_tame")
 	else:
 		for entity in E.player.get_entities():
