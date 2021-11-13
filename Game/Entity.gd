@@ -158,9 +158,10 @@ func add_entity(entity: GameEntity, activate := false, merge := true, silent := 
 		emit_signal("entity_changed")
 
 func add_entities(entities: Array, activate := false, merge := true):
-	for entity in entities:
-		add_entity(entity, activate, merge, true) # используем "тихое" добавление
-	emit_signal("entity_changed")
+	if entities:
+		for entity in entities:
+			add_entity(entity, activate, merge, true) # используем "тихое" добавление
+		emit_signal("entity_changed")
 
 func merge_entity(entity: GameEntity, target: GameEntity = null) -> GameEntity: # Объединяет сущности, возвращает ссылку на итоговую сущность
 	if not target:
@@ -204,6 +205,7 @@ func activate_entity(entity: GameEntity): # делает указаную сущ
 func deactivate_entity(entity: GameEntity):
 #	if entity in _active_entities: # защита от бесконечной деактивации
 	_active_entities.erase(entity)
+	assert(_active_entities.size() != 0)
 	entity.set_attribute(E.ACTIVE, false)
 
 func get_entities(include_self := false, active := false) -> Array:
@@ -266,12 +268,12 @@ func get_cost() -> int: # расчет суммаронй стоимости
 		
 		var capacity = _attributes.get(E.CAPACITY)
 		if capacity: # прибавляем стоимость расходников
-			var cost := 2 # предполагаем что расходники виртуальные (не имеют собственной сущности)
+			var cost: int = E.DEF_CONS_COST # предполагаем что расходники виртуальные (не имеют собственной сущности)
 			
 			var consumables = _attributes.get(E.CONSUMABLES)
 			if consumables: # расходники не виртуальные
 				var data = E.get_base_entity(consumables)
-				cost = data[E.COST] if data.has(E.QUANTITY) else 2 # для виртуальных расходников берем стоимость 2 ед.
+				cost = data[E.COST] if data.has(E.QUANTITY) else E.DEF_CONS_COST # для виртуальных расходников берем стоимость 2 ед.
 			
 			result += int(cost * capacity.x) # общая стоимость расходников
 		

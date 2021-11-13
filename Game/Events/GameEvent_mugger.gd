@@ -15,6 +15,8 @@ func setup():
 
 func _define_actions():
 	_add_hostile_actions(mugger)
+	if E.player.find_entity(E.NAME, "Красноречие", true):
+		_add_action("Договориться", "_deal")
 	_add_action("Не сопротивляться", "_dont_resist")
 	_add_action("Попытаться убежать", "_escape")
 
@@ -39,18 +41,30 @@ func _duel(defender: GameEntity, attacker: GameEntity = E.player) -> String:
 	
 	return result_text
 
+func _deal():
+	var items = _only_items()
+	var pay_off: int = E.clamp_int(-2 + randi() % items.size(), 0,  items.size())# сохранияем минимум 2 предмета
+	if pay_off:
+		items.shuffle()
+		items.resize(pay_off)
+		E.player.remove_entities(items) # для "тихого" удаления
+		return "Вы применили все свое красноречие, но все-таки\nвынуждены были отдать часть своих вещей"
+	else:
+		return "Вам удалось убедить собеседника что у вас нечего взять"
+
 func _dont_resist(): # позволить себя ограбить
 	return "Вы покорно отдали все свои вещи, а заодно выслушали\nмножество унижений в свой адрес." + _loss_items()
 
 func _loss_items() -> String:
+	E.player.remove_entities(_only_items()) # для "тихого" удаления
+	return "\nДальнейшее путешествие вы продолжаете налегке."
+
+func _only_items() -> Array: # формирует список предметов игрока
 	var items := []
 	for entity in E.player.get_entities():
 		if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM and entity != E.notebook: # забирает только предметы, кроме записной книжки
 			items.append(entity)
-	
-	E.player.remove_entities(items) # для "тихого" удаления
-	
-	return "\nДальнейшее путешествие вы продолжаете налегке."
+	return items
 
 func _escape() -> String:
 	var result_text := "Не придумав ничего лучше, вы пустились наутек.\n"

@@ -19,7 +19,7 @@ signal action_pressed # пользователь выбрал действие
 
 func _ready() -> void:
 	_button.connect("pressed", self, "_on_pressed") # дублируем сигнал с кнопки
-	EventManager.connect("tracking_changed", self, "_on_tracking_changed") # на случай изменений уже после формирования по данным события
+#	EventManager.connect("tracking_changed", self, "_on_tracking_changed") # на случай изменений уже после формирования по данным события
 
 func init(data: Dictionary) -> void: # формирование окна события для выбора из списка других событий
 	event_data = data
@@ -89,8 +89,8 @@ func _get_button() -> Button: # ищет в пуле незанятую кноп
 	_action_buttons.append(button)
 	return button
 
-func _on_tracking_changed(events: Array):
-	_tracker.visible = not events.empty()
+#func _on_tracking_changed(events: Array):
+#	_tracker.visible = not events.empty()
 
 func _on_pressed(): # нажатие на дочернюю кнопку, обозначающее выбор этого события
 	emit_signal("pressed")

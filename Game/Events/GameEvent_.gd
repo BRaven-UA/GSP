@@ -6,26 +6,14 @@ func _init() -> void:
 	name = ""
 	description = ""
 	probability = 1.0
-	distance = 5 + randi() % 76 # от 5% до 80%
-	new_character_data = {"Text":"", "Heir":null, "Remains":[E.REMAINS.NO_PETS]}
+	distance = 5 + randi() % 76
+	new_character_data = {"Text":"", "Remains":[E.REMAINS.NO_PETS]}
 
 func is_available() -> bool:
 	return E.player.find_entity(E.NAME, "", true) != null
 
 func get_tracking_text(delta: int) -> String:
-	if not E.player.find_entity(E.NAME, "Текст радиосигнала"): # координаты пропали
-		EventManager.untrack_event(self) # прекращаем отслеживание
-		return ""
-	
-	var text := "Подземный бункер: "
-	var result_distance = distance + delta
-	
-	if result_distance < 10:
-		text += "где-то рядом"
-	else:
-		text += "расстояние %d" % result_distance
-	
-	return text
+	return _default_tracking_text(delta)
 
 func setup():
 	bonus_info = ""

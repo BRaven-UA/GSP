@@ -33,16 +33,7 @@ func get_tracking_text(delta: int) -> String:
 	if not E.player.find_entity(E.NAME, "Текст радиосигнала"): # координаты пропали
 		EventManager.untrack_event(self) # прекращаем отслеживание
 		return ""
-	
-	var text := "Подземный бункер: "
-	var result_distance = distance + delta
-	
-	if result_distance < 10:
-		text += "где-то рядом"
-	else:
-		text += "расстояние %d" % result_distance
-	
-	return text
+	return _default_tracking_text(delta)
 
 func setup():
 	bonus_info = "Понадобится топор, бензопила или динамит"

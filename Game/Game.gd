@@ -38,6 +38,10 @@ func new_character(): # создание нового персонажа или 
 			turns_passed = 10 + randi() % 21 # время для поиска останков предыдущего персонажа
 		character = E.create_entity("Человек", {E.HEALTH:Vector2(80 + randi() % 21, 100)})
 		if OS.is_debug_build():
+#			character.add_entity(E.create_entity("Бензопила"))
+#			character.add_entity(E.create_entity("Аккумулятор"))
+#			character.add_entity(E.create_entity("Канистра с бензином", {E.CAPACITY:Vector2(10, 10)}))
+#			character.add_entity(E.create_entity("Красноречие"), true)
 			pass
 		var random_entity = E.randw([{"Ничего":1}, {"Собака":0.2}, {"Хлеб":0.5}, {"Нож":0.1}])
 		if random_entity != "Ничего":
@@ -103,7 +107,7 @@ func add_turns(amount: int): # увеличивает счетчик ходов
 		turn += amount
 		if turn > _max_turns:
 			shut_down()
-		emit_signal("countdown", E.clamp_int(_max_turns - turn, 0, _max_turns))
+#		emit_signal("countdown", E.clamp_int(_max_turns - turn, 0, _max_turns))
 
 func fail():
 	Logger.info("Текущий персонаж умер!", Logger.INGAME_DAMAGE)

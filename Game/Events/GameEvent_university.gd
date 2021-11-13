@@ -10,13 +10,7 @@ func _init() -> void:
 	new_character_data = {"Text":"Проходя рядом со зданием бывшего университета, а ныне\nпритона отмороженных бандитов, в овраге у дороги вы\nзамечаете труп. Тело сильно изуродовано, видимо это\nбыла жертва банды, над которой они хорошенько\nпоиздевались. Решив, что ему уже все равно вы обыскиваете\nтруп, но не находите ничего кроме какой-то записной\nкнижки.", "Heir":null, "Remains":[E.REMAINS.ONLY_NOTEBOOK]}
 
 func get_tracking_text(delta: int) -> String:
-	var text := "Университет: "
-	var result_distance = distance + delta
-	if result_distance < 10:
-		text += "где-то рядом"
-	else:
-		text += "расстояние %d" % result_distance
-	return text
+	return _default_tracking_text(delta)
 
 func setup():
 	bonus_info = "Опытный противник, мало шансов прокрасться мимо, но можно попробовать его отвлечь"

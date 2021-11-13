@@ -25,7 +25,7 @@ func _ready() -> void:
 	E.connect("notebook_updated", self, "_on_notebook_updated")
 	Game.connect("exp_changed", self, "_on_exp_changed")
 	Game.connect("new_character", self, "_on_new_character")
-	Game.connect("countdown", self, "_on_countdown")
+#	Game.connect("countdown", self, "_on_countdown")
 	_notes.connect("meta_clicked", self, "_on_meta_clicked")
 	_notes.connect("meta_hover_started", self, "_on_meta_hover")
 	_continue.connect("pressed", Game, "new_character")
@@ -60,9 +60,9 @@ func show_accept_dialog(text: String): # отображение информац
 		var ok_button = _accept_dialog.get_ok()
 		ok_button.release_focus() # не смотрится когда сразу подсвечено
 
-func show_trade_panel(merchant: GameEntity): # отображение окна торговли с игровой сущностью
+func show_trade_panel(merchant: GameEntity, electro := 0, fuel := 0): # отображение окна торговли с игровой сущностью
 	Logger.tip(Logger.TIP_TRADE)
-	_trade_panel.show_panel(merchant)
+	_trade_panel.show_panel(merchant, electro, fuel)
 
 func show_continue():
 	_continue.visible = true
@@ -70,6 +70,11 @@ func show_continue():
 func toggle_notes():
 	_center_container.visible = not _center_container.visible
 	_notes.visible = not _notes.visible
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_notes.visible = false
+		_center_container.visible = true
 
 func _on_accept_dialog_confirmed(): # пользователь закрыл окно с результатами события
 	input_delay()
@@ -97,10 +102,9 @@ func _on_exp_changed(value: int):
 	_exp_bar.hint_tooltip = "текущий опыт %d/%d" % [value, _exp_bar.max_value]
 
 func _on_notebook_updated(new_note: GameEntity):
-	var caption = new_note.get_attribute(E.NAME)
 	var note_text = new_note.get_attribute(E.DESCRIPTION)
-	var bbcode = "\n[center]%s[/center]\n\n" % caption
-	if caption.begins_with("Записка "):
+	var bbcode = "\n[center]%s[/center]\n\n" % new_note.get_attribute(E.NAME)
+	if note_text.begins_with(" "): # условный признак рукописного текста
 		bbcode += "[font=%s]%s[/font]" %[Resources.get_resource("Handwritten_font").resource_path, note_text]
 	else:
 		bbcode += note_text

@@ -9,7 +9,7 @@ func _init() -> void:
 	_set_merchant()
 
 func _set_merchant():
-	probability = names.size() / 3.0 # шанс появления зависит от количества живых торговцев
+	probability = names.size() / 6.0 # шанс появления зависит от количества живых торговцев
 	if probability:
 		name_index = randi() % names.size()
 		description = "Бронированный фургон с надписью '%s'. За рулем вооруженный охранник, а сбоку от него в кузове проделана прорезь для обмена товарами" % names[name_index]

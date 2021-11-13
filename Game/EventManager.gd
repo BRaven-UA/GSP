@@ -50,7 +50,7 @@ func update_events(): # формирует новый список событи�
 				
 				for tracker in _tracked_events:
 					if tracker != event: # не отслеживаем сами себя
-						var travel_distance := -20 + randi() % 41 # на сколько приближаемся/удаляемся от события
+						var travel_distance := -15 + randi() % 41 # на сколько приближаемся/удаляемся от события
 						var tracking_text = tracker.get_tracking_text(travel_distance)
 						if tracking_text: # если условия отслеживания не соблюдены, будет пустая строка
 							var tracking_data := {"Tracker":tracker, "Distance":travel_distance, "Text":tracking_text}

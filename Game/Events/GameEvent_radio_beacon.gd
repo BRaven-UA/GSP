@@ -29,10 +29,10 @@ func get_tracking_text(delta: int) -> String:
 
 func _define_actions():
 	if tracked:
-		if E.player.find_entity(E.NAME, "Аккумулятор"):
-			_add_action("Зарядить аккумуляторы", "_charge")
+		if E.player.find_entity(E.NAME, "Аккумулятор") or E.player.find_entity(E.CONSUMABLES, "Аккумулятор"):
+			_add_action("Зарядить электроприборы", "_charge")
 		
-		if E.player.find_entity(E.NAME, "Канистра с бензином"):
+		if E.player.find_entity(E.NAME, "Канистра с бензином") or E.player.find_entity(E.CONSUMABLES, "Канистра с бензином"):
 			_add_action("Слить бензин", "_fuel")
 		
 		_add_action("Обыскать помещение", "_search")
@@ -51,19 +51,19 @@ func _track():
 
 func _charge():
 	for entity in E.player.get_entities():
-		if entity.get_attribute(E.NAME) == "Аккумулятор":
+		if entity.get_attribute(E.NAME) == "Аккумулятор" or entity.get_attribute(E.CONSUMABLES) == "Аккумулятор":
 			entity.set_attribute(E.CAPACITY, 1000)
 	
 	E.player.change_attribute(E.HEALTH, 5) # "заряд бодрости"
 	probability = 0.05 # можно вернуться, но не скоро
-	return "Вы решили вздремнуть, пока заряжаются аккумуляторы.\nПроснувшись, вы почувствовали заряд бодрости"
+	return "Вы решили вздремнуть, пока заряжаются электроприборы.\nПроснувшись, вы почувствовали заряд бодрости"
 
 func _fuel():
 	var fuel := 10
 	
 	for entity in E.player.get_entities():
-		if entity.get_attribute(E.NAME) == "Канистра с бензином":
-			fuel = entity.change_attribute(E.CAPACITY, fuel) # разливаем остаток по канистрам
+		if entity.get_attribute(E.NAME) == "Канистра с бензином" or entity.get_attribute(E.CONSUMABLES) == "Канистра с бензином":
+			fuel = entity.change_attribute(E.CAPACITY, fuel) # разливаем остаток
 	
 	probability = 0.0 # сигнала больше нет
 	return "Заглушив двигатель электрогенератора, вы сливаете оставшийся\nбензин. В радиоэфире на этой частоте теперь тишина"

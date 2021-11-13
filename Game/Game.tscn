@@ -214,6 +214,7 @@ __meta__ = {
 }
 
 [node name="Countdown" type="Label" parent="MainContainer/VBoxContainer/ExpBar"]
+visible = false
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -10.0
@@ -265,7 +266,7 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -160.0
-margin_top = -135.0
+margin_top = -223.0
 margin_right = 160.0
 margin_bottom = 135.0
 rect_min_size = Vector2( 320, 270 )
@@ -280,18 +281,29 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -150.0
-margin_top = -125.0
+margin_top = -165.0
 margin_right = 150.0
-margin_bottom = 125.0
+margin_bottom = 170.0
 rect_min_size = Vector2( 300, 250 )
-custom_constants/separation = 10
+custom_constants/separation = -1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ItemList" type="ItemList" parent="TradePanel/VBoxContainer"]
+[node name="ItemLabel" type="Label" parent="TradePanel/VBoxContainer"]
 margin_right = 300.0
-margin_bottom = 152.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 1, 1, 0, 1 )
+text = "Товары на обмен:"
+align = 1
+valign = 2
+max_lines_visible = 1
+
+[node name="ItemList" type="ItemList" parent="TradePanel/VBoxContainer"]
+margin_top = 17.0
+margin_right = 300.0
+margin_bottom = 245.0
 focus_mode = 0
 size_flags_vertical = 3
 custom_constants/vseparation = 4
@@ -308,12 +320,73 @@ items = [ "Отделить 1 шт.", null, 0, false, false, 0, 0, null, "", fal
 hide_on_item_selection = false
 hide_on_checkable_item_selection = false
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
-margin_top = 162.0
+[node name="RefillLabel" type="Label" parent="TradePanel/VBoxContainer"]
+visible = false
+margin_top = 211.0
 margin_right = 300.0
-margin_bottom = 214.0
+margin_bottom = 245.0
+rect_min_size = Vector2( 0, 34 )
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 1, 1, 0, 1 )
+text = "Пополнение:"
+align = 1
+valign = 2
+max_lines_visible = 1
 
-[node name="StaticText" type="Label" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+[node name="RefillContainer" type="PanelContainer" parent="TradePanel/VBoxContainer"]
+visible = false
+margin_top = 235.0
+margin_right = 300.0
+margin_bottom = 245.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TradePanel/VBoxContainer/RefillContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 295.0
+margin_bottom = 5.0
+
+[node name="ElectroLabel" type="Label" parent="TradePanel/VBoxContainer/RefillContainer/VBoxContainer"]
+visible = false
+margin_right = 290.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 1 )
+text = "Электричество (0)"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ElectroSlider" type="HSlider" parent="TradePanel/VBoxContainer/RefillContainer/VBoxContainer"]
+visible = false
+margin_right = 290.0
+margin_bottom = 17.0
+focus_mode = 0
+
+[node name="FuelLabel" type="Label" parent="TradePanel/VBoxContainer/RefillContainer/VBoxContainer"]
+visible = false
+margin_right = 290.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 1 )
+text = "Бензин (0)"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FuelSlider" type="HSlider" parent="TradePanel/VBoxContainer/RefillContainer/VBoxContainer"]
+visible = false
+margin_right = 290.0
+margin_bottom = 17.0
+focus_mode = 0
+
+[node name="Summary" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
+margin_top = 244.0
+margin_right = 300.0
+margin_bottom = 296.0
+
+[node name="StaticText" type="Label" parent="TradePanel/VBoxContainer/Summary"]
 margin_right = 175.0
 margin_bottom = 52.0
 rect_min_size = Vector2( 0, 52 )
@@ -327,7 +400,7 @@ align = 2
 valign = 2
 max_lines_visible = 2
 
-[node name="Cost" type="Label" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+[node name="Cost" type="Label" parent="TradePanel/VBoxContainer/Summary"]
 margin_left = 179.0
 margin_right = 237.0
 margin_bottom = 52.0
@@ -340,33 +413,38 @@ align = 2
 valign = 2
 max_lines_visible = 2
 
-[node name="Dummy" type="Control" parent="TradePanel/VBoxContainer/HBoxContainer2"]
+[node name="Dummy" type="Control" parent="TradePanel/VBoxContainer/Summary"]
 margin_left = 241.0
 margin_right = 300.0
 margin_bottom = 52.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
-margin_top = 224.0
+[node name="Buttons" type="HBoxContainer" parent="TradePanel/VBoxContainer"]
+margin_top = 295.0
 margin_right = 300.0
-margin_bottom = 250.0
+margin_bottom = 335.0
+rect_min_size = Vector2( 0, 40 )
 alignment = 1
 
-[node name="Confirm" type="Button" parent="TradePanel/VBoxContainer/HBoxContainer"]
+[node name="Confirm" type="Button" parent="TradePanel/VBoxContainer/Buttons"]
 margin_left = 34.0
+margin_top = 14.0
 margin_right = 114.0
-margin_bottom = 26.0
+margin_bottom = 40.0
 size_flags_horizontal = 6
+size_flags_vertical = 8
 disabled = true
 shortcut_in_tooltip = false
 text = "  ОБМЕН  "
 
-[node name="Cancel" type="Button" parent="TradePanel/VBoxContainer/HBoxContainer"]
+[node name="Cancel" type="Button" parent="TradePanel/VBoxContainer/Buttons"]
 margin_left = 177.0
+margin_top = 14.0
 margin_right = 275.0
-margin_bottom = 26.0
+margin_bottom = 40.0
 size_flags_horizontal = 6
+size_flags_vertical = 8
 shortcut_in_tooltip = false
 text = "  ЗАКРЫТЬ  "
 

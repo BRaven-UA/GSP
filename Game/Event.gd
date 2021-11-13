@@ -22,6 +22,17 @@ func is_available() -> bool: # если событие содержит усло
 func get_tracking_text(delta: int) -> String: # если событие можно отслеживать, переопределить этот виртуальный метод и вернуть текст для отображения игроку
 	return ""
 
+func _default_tracking_text(delta: int) -> String:
+	var text := "%s: " % name
+	var result_distance = distance + delta
+	
+	if result_distance < 10:
+		text += "где-то рядом"
+	else:
+		text += "расстояние %d" % result_distance
+	
+	return text
+
 func setup(): # первичная настройка события при выборе его игроком из списка доступных событий (виртуальный метод для переопределения в классах-наследниках)
 	pass
 
@@ -46,10 +57,11 @@ func apply_action(index: int) -> void: # применить указанное �
 	if entity:
 		E.player.deactivate_entity(entity)
 	
-	var exp_gain: int = _action_exp.get(action.Method, 10)
-	Game.increase_exp(exp_gain)
+	var has_perk = E.player.find_entity(E.NAME, "Вундеркинд", true)
+	var exp_gain: int = _action_exp.get(action.Method, 13 if has_perk else 10)
 # warning-ignore:integer_division
-	_action_exp[action.Method] = (exp_gain + 1) / 2 # последующие действия данного события будут приносить все меньше опыта (но не меньше 1)
+	_action_exp[action.Method] = int((exp_gain + 3) / 2.1) if has_perk else (exp_gain + 1) / 2 # последующие действия данного события будут приносить все меньше опыта (но не меньше 1)
+	Game.increase_exp(exp_gain)
 	
 	GUI.show_accept_dialog(result_text)
 

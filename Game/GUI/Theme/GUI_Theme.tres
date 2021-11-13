@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=12 format=2]
+[gd_resource type="Theme" load_steps=13 format=2]
 
 [ext_resource path="res://Game/GUI/Theme/Regular_Font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Game/GUI/Theme/BG_Stylebox.tres" type="StyleBox" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Game/GUI/Theme/Progress_BG_Stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://Game/GUI/Theme/Disabled_Stylebox.tres" type="StyleBox" id=8]
 [ext_resource path="res://Game/GUI/Theme/Selected_Flat.tres" type="StyleBox" id=9]
+[ext_resource path="res://Game/GUI/Theme/GRABBER.png" type="Texture" id=10]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 0, 0, 1 )
@@ -22,6 +23,8 @@ Button/styles/focus = ExtResource( 3 )
 Button/styles/hover = ExtResource( 4 )
 Button/styles/normal = ExtResource( 3 )
 Button/styles/pressed = ExtResource( 5 )
+HSlider/icons/grabber = ExtResource( 10 )
+HSlider/icons/grabber_highlight = ExtResource( 10 )
 ItemList/colors/font_color = Color( 1, 1, 1, 1 )
 ItemList/styles/bg = ExtResource( 2 )
 ItemList/styles/cursor = SubResource( 1 )
@@ -34,6 +37,8 @@ ProgressBar/styles/bg = ExtResource( 7 )
 ProgressBar/styles/fg = ExtResource( 6 )
 RichTextLabel/styles/normal = ExtResource( 2 )
 ScrollContainer/styles/bg = ExtResource( 5 )
+VSlider/icons/grabber = ExtResource( 10 )
+VSlider/icons/grabber_highlight = ExtResource( 10 )
 WindowDialog/constants/title_height = 0
 WindowDialog/icons/close = SubResource( 2 )
 WindowDialog/styles/panel = ExtResource( 2 )
