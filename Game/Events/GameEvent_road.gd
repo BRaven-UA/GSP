@@ -29,7 +29,7 @@ func _go_along() -> String:
 		if randf() < 0.35: # смогли убежать
 			var items: = []
 			for entity in E.player.get_entities():
-				if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM:
+				if entity.get_attribute(E.CLASS) == E.CLASSES.ITEM and entity != E.notebook:
 					items.append(entity)
 			
 			if items:

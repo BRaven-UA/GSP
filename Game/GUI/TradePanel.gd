@@ -138,8 +138,9 @@ func _update_offers(item_list: ItemList = null): # обновляет данны
 		var item_cost := 0
 		for index in item_list.get_selected_items():
 			var entity = item_list.get_item_metadata(index)
-			item_cost += entity.get_cost()
-			entities.append(entity)
+			if entity != E.notebook:
+				item_cost += entity.get_cost()
+				entities.append(entity)
 		
 		if item_list == player_item_list:
 			_player_item_cost = item_cost
@@ -149,7 +150,7 @@ func _update_offers(item_list: ItemList = null): # обновляет данны
 	var merchant_total_cost := int((_merchant_item_cost + (_electo_slider.value + _fuel_slider.value) * E.DEF_CONS_COST) * _merchant_markup)
 	
 	_label.text = "%d\n%d" % [_player_item_cost, merchant_total_cost]
-	_confirm.disabled = _player_item_cost < merchant_total_cost or _player_item_cost < 1
+	_confirm.disabled = _player_item_cost < merchant_total_cost #or _player_item_cost < 1
 
 func _on_player_entities_changed(entities: Array):
 	_player_selection.clear()

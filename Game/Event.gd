@@ -6,15 +6,12 @@ class_name GameEvent
 
 var name: String # заголовок события
 var description: String # описание события до того как игрок получит перечень возможных действий
-#var entities: Array # прикрепленные к событию сущности (если есть)
 var bonus_info: String # дополнительная информация, доступная только с перком "Зоркость"
 var probability := 1.0 # вероятность появления события в списке доступных (может быть больше 1, если событие важное)
 var distance := 0 # расстояние до игрока в процентах (0 - 100)
 var new_character_data: Dictionary # можно задать данные о новом персонаже, если событие приведет к смерти текущего
 var actions: Array # список действий для данного события
 var _action_exp := {} # количество опыта по завершению события (для разных действий отельно)
-#var _player: GameEntity = E.player # ссылка на сущность игрока
-#var _player_entities: Array = Global.player.entities # ссылка на все сущности игрока
 
 func is_available() -> bool: # если событие содержит условия возникновения, переопределить этот виртуальный метод и вернуть булево значение выполнены требования или нет
 	return true
@@ -35,6 +32,9 @@ func _default_tracking_text(delta: int) -> String:
 
 func setup(): # первичная настройка события при выборе его игроком из списка доступных событий (виртуальный метод для переопределения в классах-наследниках)
 	pass
+
+func reset_exp():
+	_action_exp.clear()
 
 func update_actions(): # формирует список возможных действий, исходя из атрибутов игрока и его предметов
 	actions.clear()
@@ -80,7 +80,7 @@ func _add_hostile_actions(target: GameEntity, text := "Напасть"): # ст�
 		if change_health < 0: # отнимает здоровье
 			var charges = entity.get_attribute(E.CAPACITY, true, Vector2(1, 1)) # один заряд для проверки на заряды
 			if charges.x: # есть заряды
-				var entity_text = "" if entity == E.player else ", используя " + entity.get_text()
+				var entity_text = ", используя " + entity.get_text()
 				var action_text = "%s%s (урон %d)" % [text, entity_text, abs(change_health)]
 				var attacker = entity if entity.get_attribute(E.HEALTH) else E.player
 				
@@ -90,7 +90,7 @@ func _add_hostile_actions(target: GameEntity, text := "Напасть"): # ст�
 						unique_action = false
 						break
 				if unique_action:
-					_add_action(action_text, "_duel", [target, attacker], entity)
+					_add_action(action_text, "_duel", [target, attacker], entity if entity.get_attribute(E.CLASS) != E.CLASSES.ABILITY else null)
 				
 				Logger.tip(Logger.TIP_WEAPON)
 			else:

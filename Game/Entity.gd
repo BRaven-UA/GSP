@@ -130,32 +130,33 @@ func change_attribute(name: int, value = -1, directly := true) -> int:
 	return surplus
 
 func add_entity(entity: GameEntity, activate := false, merge := true, silent := false): # добавляет сущность к собственным, опционально активирует ее, опционально объединяет с подобными
-	Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
-	
-	if self == E.player:
-		Logger.info("Добавлено: " + entity.get_text(), Logger.INGAME_TAKE)
+	if entity:
+		Logger.debug("{%s} добавлено в {%s}" % [entity.get_text(), get_text()])
 		
-		if entity.get_attribute(E.GROUP) == E.GROUPS.NOTES:
-			E.notebook.add_entity(entity) # записки сразу добавляем в записную книжку
-			E.emit_signal("notebook_updated", entity)
-			Logger.tip(Logger.TIP_NOTE)
-			return
+		if self == E.player:
+			Logger.info("Добавлено: " + entity.get_text(), Logger.INGAME_TAKE)
+			
+			if entity.get_attribute(E.GROUP) == E.GROUPS.NOTES:
+				E.notebook.add_entity(entity) # записки сразу добавляем в записную книжку
+				E.emit_signal("notebook_updated", entity)
+				Logger.tip(Logger.TIP_NOTE)
+				return
+			
+			if entity.get_attribute(E.KNOWLEDGE):
+				Logger.tip(Logger.TIP_STUDY)
 		
-		if entity.get_attribute(E.KNOWLEDGE):
-			Logger.tip(Logger.TIP_STUDY)
-	
-	var merged = merge_entity(entity) if merge else null # объединение сущностей (если нужно)
-	if merged:
-		entity = merged # заменяем исходную сущность на итоговую
-	else:
-		_entities.append(entity)
-		entity.owner = self
-	
-	if activate:
-		activate_entity(entity)
-	
-	if not silent: # "тихое" добавление используется при пакетном добавлении чтобы не "флудить" сигналом
-		emit_signal("entity_changed")
+		var merged = merge_entity(entity) if merge else null # объединение сущностей (если нужно)
+		if merged:
+			entity = merged # заменяем исходную сущность на итоговую
+		else:
+			_entities.append(entity)
+			entity.owner = self
+		
+		if activate:
+			activate_entity(entity)
+		
+		if not silent: # "тихое" добавление используется при пакетном добавлении чтобы не "флудить" сигналом
+			emit_signal("entity_changed")
 
 func add_entities(entities: Array, activate := false, merge := true):
 	if entities:
@@ -176,21 +177,23 @@ func merge_entity(entity: GameEntity, target: GameEntity = null) -> GameEntity: 
 	return null
 
 func remove_entity(entity: GameEntity, silent := false):
-	_entities.erase(entity)
-	_active_entities.erase(entity)
-	entity.owner = null
-	
-	if self == E.player:
-		Logger.info("Удалено: " + entity.get_text(), Logger.INGAME_LOSS)
-	Logger.debug("{%s} удалено из {%s}" % [entity.get_text(), get_text()])
-	
-	if not silent: # "тихое" удаление используется при пакетном удалении чтобы не "флудить" сигналом
-		emit_signal("entity_changed")
+	if entity:
+		deactivate_entity(entity)
+		_entities.erase(entity)
+		entity.owner = null
+		
+		if self == E.player:
+			Logger.info("Удалено: " + entity.get_text(), Logger.INGAME_LOSS)
+		Logger.debug("{%s} удалено из {%s}" % [entity.get_text(), get_text()])
+		
+		if not silent: # "тихое" удаление используется при пакетном удалении чтобы не "флудить" сигналом
+			emit_signal("entity_changed")
 
 func remove_entities(entities: Array):
-	for entity in entities:
-		remove_entity(entity, true) # используем "тихое" удаление
-	emit_signal("entity_changed")
+	if entities:
+		for entity in entities:
+			remove_entity(entity, true) # используем "тихое" удаление
+		emit_signal("entity_changed")
 
 func activate_entity(entity: GameEntity): # делает указаную сущность активной (влияющей на данную сущность)
 	if entity in _active_entities:
